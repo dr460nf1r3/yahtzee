@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     else if (yahtzee.state.attemptsLeft !== 3) {
-            document.querySelectorAll('div > button').forEach(button => {
+            document.querySelectorAll('.outtercontainer > button').forEach(button => {
                 button.disabled = false;
             });
         }
