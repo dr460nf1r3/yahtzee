@@ -175,6 +175,56 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all score buttons
+    const scoreButtons = document.querySelectorAll('button[id]');
+    scoreButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Call the function with the same name as the button's id
+            if (this.id == "ones"){
+                yahtzee.ones();
+            }
+            else if (this.id == "twos"){
+                yahtzee.twos();
+            }
+            else if (this.id == "threes"){
+                yahtzee.threes();
+            }
+            else if (this.id == "fours"){
+                yahtzee.fours();
+            }
+            else if (this.id == "fives"){
+                yahtzee.fives();
+            }
+            else if (this.id == "sixes"){
+                yahtzee.sixes();
+            }
+            else if (this.id == "threeOfAKind"){
+                yahtzee.threeOfAKind();
+            }
+            else if (this.id == "fourOfAKind"){
+                yahtzee.fourOfAKind();
+            }
+            else if (this.id == "fullHouse"){
+                yahtzee.fullHouse();
+            }
+            else if (this.id == "smallStraight"){
+                yahtzee.smallStraight();
+            }
+            else if (this.id == "largeStraight"){
+                yahtzee.largeStraight();
+            }
+            else if (this.id == "yahtzee"){
+                yahtzee.yahtzee();
+            }
+            else if (this.id == "chance"){
+                yahtzee.chance();
+            }
+        
+        });
+    });
+});
+
 const yahtzee = new Yahtzee()
 
 yahtzee.rollDice()
@@ -205,3 +255,5 @@ Results[3] = dice4.roll();
 Results[4] = dice5.roll();
 
 console.log(Results);
+
+
