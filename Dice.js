@@ -68,6 +68,8 @@ class Yahtzee {
         this.selectionDone("upperSection", "fours")
         this.resetAttempts()
         this.state.pointsSum += this.diceKeep.filter(die => die === 4).length * 4;
+        scorefours = this.diceKeep.filter(die => die === 4).length * 4;
+        return scorefours
     }
 
     fives() {
@@ -209,11 +211,19 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('td > button').forEach(button => {
             button.disabled = false;
         });
-    } else {
+    }
+    else if (yahtzee.state.attemptsLeft !== 3) {
+            document.querySelectorAll('div > button').forEach(button => {
+                button.disabled = false;
+            });
+        }
+    else {
+        
         // Optionally, ensure score buttons are disabled when there are attempts left
         document.querySelectorAll('td > button').forEach(button => {
             button.disabled = true;
         });
+
     }
 });
 
