@@ -1,7 +1,7 @@
 // Create a new class for solving points in Yahtzee
 class Yahtzee {
     dice = [];
-    diceCount = 5;
+    state = {diceCount: 5, attemptsLeft: 3};
     diceKeep = []
     pointsSum = 0;
 
@@ -19,17 +19,25 @@ class Yahtzee {
 
     selectDice(dice) {
         // dice = Array of indexes of dice to select
-        this.diceKeep.push(this.dice[i]);
-        this.diceCount = this.diceCount - dice.length;
+        this.diceKeep.push(dice);
+        this.state.diceCount = this.state.diceCount - 1;
     }
 
     rollDice() {
         // count = Number of dice to roll
         let diceRolled = [];
-        for (let i = 0; i < this.diceCount; i++) {
+        for (let i = 0; i < this.state.diceCount; i++) {
             diceRolled.push(Math.floor(Math.random() * 6) + 1);
         }
         this.dice = diceRolled;
+        console.log("Dice rolled", diceRolled)
+
+        this.state.attemptsLeft -= 1;
+        if (this.state.attemptsLeft === 0) {
+            this.diceKeep.push(...diceRolled)
+            console.log("Pushing to diceKeep", this.diceKeep)
+        }
+
         return diceRolled;
     }
 
@@ -44,72 +52,86 @@ class Yahtzee {
         this.twos()
     }
 
-    setDice(dice) {
-        this.dice = dice;
+    resetAttempts() {
+        this.state.attempt = 1;
+        this.state.diceCount = 5;
     }
 
     ones() {
         this.selectionDone("upperSection", "ones")
+        this.resetAttempts()
         this.pointsSum += this.diceKeep.filter(die => die === 1).length;
     }
 
     twos() {
         this.selectionDone("upperSection", "twos")
+        this.resetAttempts()
         this.pointsSum += this.diceKeep.filter(die => die === 2).length * 2;
     }
 
     threes() {
         this.selectionDone("upperSection", "threes")
+        this.resetAttempts()
         this.pointsSum += this.diceKeep.filter(die => die === 3).length * 3;
     }
 
     fours() {
         this.selectionDone("upperSection", "fours")
+        this.resetAttempts()
         this.pointsSum += this.diceKeep.filter(die => die === 4).length * 4;
     }
 
     fives() {
         this.selectionDone("upperSection", "fives")
+        this.resetAttempts()
         this.pointsSum += this.diceKeep.filter(die => die === 5).length * 5;
     }
 
     sixes() {
         this.selectionDone("upperSection", "sixes")
+        this.resetAttempts()
         this.pointsSum += this.diceKeep.filter(die => die === 6).length * 6;
     }
 
     chance() {
         this.selectionDone("lowerSection", "chance")
+        this.resetAttempts()
         this.pointsSum += this.sum();
     }
 
     yahtzee() {
         this.selectionDone("lowerSection", "yahtzee")
+        this.resetAttempts()
         this.pointsSum += 50
     }
 
     fullHouse() {
         this.selectionDone("lowerSection", "fullHouse")
+        this.resetAttempts()
         this.pointsSum += 25
     }
 
     fourOfAKind() {
         this.selectionDone("lowerSection", "fourOfAKind")
+        this.resetAttempts()
         this.pointsSum += this.sum()
     }
 
     threeOfAKind() {
         this.selectionDone("lowerSection", "threeOfAKind")
+        this.resetAttempts()
         this.pointsSum += this.sum()
     }
 
     smallStraight() {
         this.selectionDone("lowerSection", "smallStraight")
+        this.resetAttempts()
         this.pointsSum += 30
     }
 
     largeStraight() {
         this.selectionDone("lowerSection", "largeStraight")
+        this.resetAttempts()
         this.pointsSum += 40
     }
 
@@ -152,6 +174,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     dice.style.backgroundColor = 'brown';
                 }
             }
+
+            yahtzee.selectDice(Number(dice.innerText))
+            dice.classList.add("added")
+            dice.disabled = true
+            console.log("Selecting dice", dice.innerText)
         });
     });
 
@@ -160,17 +187,30 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('dice3'),
         document.getElementById('dice4'),
         document.getElementById('dice5')]
-    console.log(diceFields)
+
+    const updateRemainingRollCount = (attemptsLeft) => {
+        document.getElementById('roll-count').innerText = attemptsLeft
+        document.getElementById('roll-count-lang').innerText = attemptsLeft !== 1 ? "times" : "time"
+    }
+    const updateScore = () => {
+        document.getElementById('score-info').innerText = yahtzee.pointsSum.toString()
+    }
 
     const rollDice = document.getElementById('roll-button')
     rollDice.addEventListener('click', function () {
         const results = yahtzee.rollDice()
+        console.log("Results", results)
         for (const field in diceFields) {
-            if (diceFields[field].style.backgroundColor === 'green') {
-                yahtzee.selectDice([field])
-                continue
+            console.log("Fields", field)
+            const currentField = diceFields[`${field}`]
+            if (currentField.style.backgroundColor !== 'brown') {
+                diceFields[field].innerText = results[field]
             }
-            diceFields[field].innerHTML = results[field]
+        }
+        updateRemainingRollCount(yahtzee.state.attemptsLeft)
+
+        if (yahtzee.state.attemptsLeft === 0) {
+            rollDice.disabled = true
         }
     })
 });
@@ -226,8 +266,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 const yahtzee = new Yahtzee()
-
-yahtzee.rollDice()
 
 class Dice {
     constructor() {
