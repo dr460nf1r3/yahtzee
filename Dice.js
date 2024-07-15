@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             else if (this.id == "twos"){
                 yahtzee.twos();
-            }
+            }  
             else if (this.id == "threes"){
                 yahtzee.threes();
             }
