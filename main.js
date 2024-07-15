@@ -1,7 +1,22 @@
-// Create a new class for solving points in Yahtzee
+/**
+ * Class representing a Yazhtzee game, per player.
+ * @class
+ * @property {Number[]} dice - Array to store the dice that are rolled
+ * @property {Object} state - Object to store the current state of the game
+ * @property {Number} state.diceCount - Number of dice to roll
+ * @property {Number} state.attemptsLeft - Number of attempts left
+ * @property {Number} state.pointsSum - Sum of the points
+ * @property {Boolean} state.bonusCalculated - Whether the bonus has been calculated
+ * @property {Number[]} diceKeep - Array to store the dice that are kept, used for calculating the score
+ * @property {Object} remainingSection - Object to store the remaining sections of the game
+ * @property {String[]} remainingSection.upperSection - Remaining sections of the upper section
+ * @property {String[]} remainingSection.lowerSection - Remaining sections of the lower section
+ * @example const yahtzee = new Yahtzee()
+ */
 class Yahtzee {
     dice = [];
     state = {
+        name: "Player 1",
         diceCount: 5,
         attemptsLeft: 3,
         pointsSum: 0,
@@ -16,12 +31,19 @@ class Yahtzee {
     }
 
     /**
+     * Create a Yahtzee game, optionally with a name of the player this game belongs to.
+     * @param name {String} The name of the player
+     */
+    constructor(name = "Player 1") {
+        this.state.name = name;
+    }
+
+    /**
      * Sums the dice array.
      * @returns {Number} The sum of the dice array
      */
     sum() {
-        console.log("sum", this.dice.reduce((a, b) => a + b, 0))
-        return this.dice.reduce((a, b) => a + b, 0);
+        return this.diceKeep.reduce((a, b) => a + b, 0);
     }
 
     /**
@@ -29,7 +51,6 @@ class Yahtzee {
      * @param dice Number of the dice to select
      */
     selectDice(dice) {
-        // dice = Array of indexes of dice to select
         this.diceKeep.push(dice);
         this.state.diceCount = this.state.diceCount - 1;
     }
@@ -39,7 +60,7 @@ class Yahtzee {
      * @returns {Number[]} Array of dice rolled
      */
     rollDice() {
-        // count = Number of dice to roll
+        // Roll the dice and store them in the dice array
         let diceRolled = [];
         for (let i = 0; i < this.state.diceCount; i++) {
             diceRolled.push(Math.floor(Math.random() * 6) + 1);
@@ -47,6 +68,9 @@ class Yahtzee {
         this.dice = diceRolled;
 
         this.state.attemptsLeft -= 1;
+
+        // If no attempts are left, add the remaining dice to the diceKeep array,
+        // as it will be used for the score calculation
         if (this.state.attemptsLeft === 0) {
             this.diceKeep.push(...diceRolled)
         }
@@ -63,73 +87,14 @@ class Yahtzee {
     }
 
     /**
-     * Calculate the score for the one's category.
+     * Calculate the score for the upper categories.
+     * @param {Number} multiplier The multiplier for the category (1-6)
      * @returns {Number} The points gained for this category
      */
-    ones() {
-        this.selectionDone("upperSection", "ones")
+    onesToSixes(multiplier) {
+        this.selectionDone("upperSection", this.remainingSection.upperSection[multiplier - 1])
         this.resetAttempts()
-        const score = this.diceKeep.filter(die => die === 1).length;
-        this.state.pointsSum += score;
-        return score
-    }
-
-    /**
-     * Calculate the score for the two's category.
-     * @returns {Number} The points gained for this category
-     */
-    twos() {
-        this.selectionDone("upperSection", "twos")
-        this.resetAttempts()
-        const score = this.diceKeep.filter(die => die === 2).length * 2;
-        this.state.pointsSum += score;
-        return score
-    }
-
-    /**
-     * Calculate the score for the three's category.
-     * @returns {Number} The points gained for this category
-     */
-    threes() {
-        this.selectionDone("upperSection", "threes")
-        this.resetAttempts()
-        const score = this.diceKeep.filter(die => die === 3).length * 3;
-        this.state.pointsSum += score;
-        return score
-    }
-
-    /**
-     * Calculate the score for the four's category.
-     * @returns {Number} The points gained for this category
-     */
-    fours() {
-        this.selectionDone("upperSection", "fours")
-        this.resetAttempts()
-        const score = this.diceKeep.filter(die => die === 4).length * 4;
-        this.state.pointsSum += score;
-        return score
-    }
-
-    /**
-     * Calculate the score for the five's category
-     * @returns {Number} The points gained for this category
-     */
-    fives() {
-        this.selectionDone("upperSection", "fives")
-        this.resetAttempts()
-        const score = this.diceKeep.filter(die => die === 5).length * 5;
-        this.state.pointsSum += score;
-        return score
-    }
-
-    /**
-     * Calculate the score for the six's category
-     * @returns {Number} The points gained for this category
-     */
-    sixes() {
-        this.selectionDone("upperSection", "sixes")
-        this.resetAttempts()
-        const score = this.diceKeep.filter(die => die === 6).length * 6;
+        const score = this.diceKeep.filter(number => number === multiplier).length * multiplier;
         this.state.pointsSum += score;
         return score
     }
@@ -234,12 +199,14 @@ class Yahtzee {
      * corresponding sections.
      */
     bonusPoints() {
+        const bonusTextElement = document.getElementById('score-bonus')
         if (this.state.pointsSum > 63) {
-            const bonusTextElement = document.getElementById('score-bonus')
             bonusTextElement.innerText = "35"
             this.state.pointsSum += 35
-            yahtzee.state.bonusCalculated = true
+        } else {
+            bonusTextElement.innerText = "None :("
         }
+        yahtzee.state.bonusCalculated = true
     }
 }
 
@@ -255,6 +222,23 @@ const updateRemainingRollCount = (attemptsLeft) => {
     document.getElementById('roll-count-lang').innerText = attemptsLeft !== 1 ? "times" : "time"
 }
 
+const finishRollingDicePhase = () => {
+    const keepButtons = document.querySelectorAll('.innercontainer_lock');
+    const rollDice = document.getElementById('roll-button')
+
+    rollDice.disabled = true;
+    keepButtons.forEach(button => {
+        button.disabled = true;
+    });
+
+    // Enable all score buttons that are not filled yet
+    document.querySelectorAll('td > button').forEach(button => {
+        if (!button.classList.contains("filled")) {
+            button.disabled = false;
+        }
+    });
+}
+
 /**
  * Finish the current run by updating the score and resetting the dice and buttons.
  */
@@ -262,19 +246,29 @@ const finishRun = () => {
     const keepButtons = document.querySelectorAll('.innercontainer_lock');
     const rollDice = document.getElementById('roll-button')
     const scoreDisplay = document.getElementById('score-info')
+    const scoreButtons = document.querySelectorAll('td > button')
 
     scoreDisplay.innerText = yahtzee.state.pointsSum
     rollDice.disabled = false
     keepButtons.forEach(button => {
         const number = button.id.replace(/\D/g, '');
-        button.disabled = false
+        button.disabled = true
         const dice = document.getElementById(`dice${number}`);
         dice.style.backgroundColor = 'beige';
         dice.innerText = ""
     })
+    scoreButtons.forEach(button => {
+        button.disabled = true;
+    })
 
-    if (yahtzee.remainingSection.upperSection.length === 0) {
+    updateRemainingRollCount(yahtzee.state.attemptsLeft);
+
+    // React to special stages of the game, e.g., a fully filled upper section
+    if (yahtzee.remainingSection.upperSection.length === 0 && !yahtzee.state.bonusCalculated) {
         yahtzee.bonusPoints()
+    } else if (yahtzee.remainingSection.upperSection.length === 0 && yahtzee.remainingSection.lowerSection.length === 0) {
+        // In case all sections are filled, we want to end the game
+        alert(`Game over! Your final score is ${yahtzee.state.pointsSum}.`)
     }
 }
 
@@ -290,12 +284,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const dice = document.getElementById(`dice${number}`);
 
             // Toggle the dices background color between green and beige
-            if (dice) {
-                if (dice.style.backgroundColor === 'brown') {
-                    dice.style.backgroundColor = 'beige';
-                } else {
-                    dice.style.backgroundColor = 'brown';
-                }
+            if (dice.style.backgroundColor === 'brown') {
+                dice.style.backgroundColor = 'beige';
+            } else {
+                dice.style.backgroundColor = 'brown';
             }
 
             // Select the dice via our Yahtzee class
@@ -303,6 +295,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Don't allow further modification to this button until the next run
             button.disabled = true
+
+            if (yahtzee.state.diceCount === 0) {
+                finishRollingDicePhase()
+            }
         });
     });
 
@@ -319,47 +315,34 @@ document.addEventListener('DOMContentLoaded', function () {
         // Roll the dice and update each field that hasn't been selected already
         const results = yahtzee.rollDice();
         for (const field in diceFields) {
-            console.log("Fields", field);
             const currentField = diceFields[`${field}`];
             if (currentField.style.backgroundColor !== 'brown') {
-                diceFields[field].innerText = results.pop();
+                diceFields[field].innerText = results.pop().toString();
             }
         }
 
         updateRemainingRollCount(yahtzee.state.attemptsLeft);
 
-    // Disable roll and keep buttons when no attempts are left
-    if (yahtzee.state.attemptsLeft === 0) {
-        rollDice.disabled = true;
-        keepButtons.forEach(button => {
-            button.disabled = true;
-        });
-        // Enable all score buttons
-        document.querySelectorAll('td > button').forEach(button => {
-            button.disabled = false;
-        });
-    }
-    else if (yahtzee.state.attemptsLeft !== 3) {
+        // Disable roll and keep buttons when no attempts are left
+        if (yahtzee.state.attemptsLeft === 0) {
+            finishRollingDicePhase()
+        } else if (yahtzee.state.attemptsLeft !== 3) {
             document.querySelectorAll('.outtercontainer > button').forEach(button => {
                 button.disabled = false;
             });
+        } else {
+            // Optionally, ensure score buttons are disabled when there are attempts left
+            document.querySelectorAll('td > button').forEach(button => {
+                button.disabled = true;
+            });
+
         }
-    else {
-
-        // Optionally, ensure score buttons are disabled when there are attempts left
-        document.querySelectorAll('td > button').forEach(button => {
-            button.disabled = true;
-        });
-
-    }
-});
+    });
 
     document.querySelectorAll('td > button').forEach(button => {
         button.disabled = true;
     });
-});
 
-document.addEventListener('DOMContentLoaded', function () {
     // Select all score buttons
     const scoreButtons = document.querySelectorAll('td > button');
     scoreButtons.forEach(button => {
@@ -369,22 +352,22 @@ document.addEventListener('DOMContentLoaded', function () {
             let score = 0
             switch (button.id) {
                 case "ones":
-                    score = yahtzee.ones();
+                    score = yahtzee.onesToSixes(1);
                     break;
                 case "twos":
-                    score = yahtzee.twos();
+                    score = yahtzee.onesToSixes(2);
                     break;
                 case "threes":
-                    score = yahtzee.threes();
+                    score = yahtzee.onesToSixes(3);
                     break;
                 case "fours":
-                    score = yahtzee.fours();
+                    score = yahtzee.onesToSixes(4);
                     break;
                 case "fives":
-                    score = yahtzee.fives();
+                    score = yahtzee.onesToSixes(5);
                     break;
                 case "sixes":
-                    score = yahtzee.sixes();
+                    score = yahtzee.onesToSixes(6);
                     break;
                 case "ThreeOfAKind":
                     score = yahtzee.threeOfAKind();
@@ -405,11 +388,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     score = yahtzee.yahtzee();
                     break;
             }
-
             button.disabled = true;
+            button.classList.add("filled")
             scoreElement.innerText = score.toString();
             finishRun()
         });
     });
 });
-

@@ -1,24 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Yahtzee</title>
-    <link rel="icon" href="favicon.png" type="image/x-icon">
+    <link rel="icon" href="assets/favicon.svg" type="image/x-icon">
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' href='main.css'>
-    <script src="Dice.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
+    <script src="main.js"></script>
 </head>
 <body>
 
-<h1 class="title">Yahtzee</h1>
+<h1 class="title">Yahtzee 🎲</h1>
 <div class="main-container">
     <div class="outtercontainer_left">
         <div class="outtercontainer">
-            <button id="roll-button" class="roll">Roll</button>
+            <button id="roll-button" class="roll">Roll dice</button>
         </div>
         <div class="outtercontainer">
-            <div class="roles_left">You can roll <a id="roll-count">3</a> more <a id="roll-count-lang">times</a></div>
+            <div class="roles_left">You can roll <a id="roll-count">3</a> more <a id="roll-count-lang">times 🔁</a></div>
         </div>
 
         <div class="outtercontainer">
@@ -30,11 +33,11 @@
 
         </div>
         <div class="outtercontainer">
-            <button class="innercontainer_lock" disabled="true" id="keep1">Keep</button>
-            <button class="innercontainer_lock" disabled="true" id="Keep2">Keep</button>
-            <button class="innercontainer_lock" disabled="true" id="keep3">Keep</button>
-            <button class="innercontainer_lock" disabled="true" id="keep4">Keep</button>
-            <button class="innercontainer_lock" disabled="true" id="keep5">Keep</button>
+            <button class="innercontainer_lock" disabled="disabled" id="keep1">Keep</button>
+            <button class="innercontainer_lock" disabled="disabled" id="Keep2">Keep</button>
+            <button class="innercontainer_lock" disabled="disabled" id="keep3">Keep</button>
+            <button class="innercontainer_lock" disabled="disabled" id="keep4">Keep</button>
+            <button class="innercontainer_lock" disabled="disabled" id="keep5">Keep</button>
         </div>
         <div class="score">Your Score is: <a id="score-info">0</a></div>
     </div>
@@ -51,59 +54,59 @@
             <tbody>
             <tr>
                 <td>Ones</td>
-                <td id="score-ones">0</td>
+                <td id="score-ones"></td>
                 <td>
                     <button id="ones" disabled="disabled" class="upper">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Twos</td>
-                <td id="score-twos">0</td>
+                <td id="score-twos"></td>
                 <td>
                     <button id="twos" disabled="disabled" class="upper">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Threes</td>
-                <td id="score-threes">0</td>
+                <td id="score-threes"></td>
                 <td>
                     <button id="threes" disabled="disabled" class="upper">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Fours</td>
-                <td id="score-fours">0</td>
+                <td id="score-fours"></td>
                 <td>
                     <button id="fours" disabled="disabled" class="upper">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Fives</td>
-                <td id="score-fives">0</td>
+                <td id="score-fives"></td>
                 <td>
                     <button id="fives" disabled="disabled" class="upper">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Sixes</td>
-                <td id="score-sixes">0</td>
+                <td id="score-sixes"></td>
                 <td>
                     <button id="sixes" disabled="disabled" class="upper">Score</button>
                 </td>
             </tr>
             <tr>
-                <td>Bonus (get 35 points if you get to 63 in the upper Section)</td>
-                <td id="score-bonus">0</td>
+                <td>Bonus (receive 35 points if you get to 63 in the upper Section)</td>
+                <td id="score-bonus"></td>
                 <td></td>
             </tr>
             <tr>
                 <td>Score upper Section:</td>
-                <td>0</td>
+                <td></td>
                 <td></td>
             </tr>
             <tr>
                 <td>Three of a Kind</td>
-                <td id="score-ThreeOfAKind">0</td>
+                <td id="score-ThreeOfAKind"></td>
                 <td>
                     <button id="ThreeOfAKind" disabled="disabled" class="lower">Score</button>
                 </td>
@@ -111,42 +114,42 @@
             </tr>
             <tr>
                 <td>Four of a Kind</td>
-                <td id="score-FourOfAKind">0</td>
+                <td id="score-FourOfAKind"></td>
                 <td>
                     <button id="FourOfAKind" disabled="disabled" class="lower">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Full House</td>
-                <td id="score-FullHouse">0</td>
+                <td id="score-FullHouse"></td>
                 <td>
                     <button id="FullHouse" disabled="disabled" class="lower">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Small Straight</td>
-                <td id="score-SmallStraight">0</td>
+                <td id="score-SmallStraight"></td>
                 <td>
                     <button id="SmallStraight" disabled="disabled" class="lower">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Large Straight</td>
-                <td id="score-LargeStraight">0</td>
+                <td id="score-LargeStraight"></td>
                 <td>
                     <button id="LargeStraight" disabled="disabled" class="lower">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Yahtzee</td>
-                <td id="score-Yahtzee">0</td>
+                <td id="score-Yahtzee"></td>
                 <td>
                     <button id="Yahtzee" disabled="disabled" class="lower">Score</button>
                 </td>
             </tr>
             <tr>
                 <td>Chance</td>
-                <td id="scoreChance">0</td>
+                <td id="scoreChance"></td>
                 <td>
                     <button id="Chance" disabled="disabled" class="lower">Score</button>
                 </td>

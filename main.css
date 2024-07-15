@@ -1,10 +1,9 @@
-.outtercontainer{
+.outtercontainer {
     display: flex;
     justify-content: space-around;
 }
 
-
-.title{
+.title {
     font-size: 60px;
     font-weight: bold;
     text-align: center;
@@ -13,35 +12,41 @@
 
 }
 
-.roll{
+.roll {
     font-size: 30px;
     font-weight: bold;
     text-align: center;
     margin-top: 5%;
     margin-bottom: 5%;
-
-
 }
 
-.innercontainer{
-    
+.roll {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+.innercontainer {
+
     width: 100px;
     height: 100px;
     border: 1px solid black;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
     background-color: beige;
 }
 
-.innercontainer_lock{
-    
+.innercontainer_lock {
+
     width: 100px;
     height: 20px;
     border: 1px solid black;
     margin-top: 3%;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
 }
 
@@ -71,17 +76,26 @@ th {
     padding: 10px;
 }
 
-.outtercontainer_left{
+.outtercontainer_left {
     background: green;
 }
 
-.roles_left{
+.roles_left {
     margin-bottom: 3%;
 }
-.score{
+
+.score {
     font-size: 30px;
     font-weight: bold;
     text-align: center;
     margin-top: 5%;
     margin-bottom: 5%;
+}
+
+body {
+    font-family: "Fira Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    <!-- "https://unsplash.com/photos/3-white-dice-on-black-surface-hAdfTKFXmwM" -->
+    background-image: url("./assets/background.jpg");
 }
