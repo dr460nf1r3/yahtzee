@@ -1,3 +1,24 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener to each "Keep" button
+    const keepButtons = document.querySelectorAll('.innercontainer_lock');
+    keepButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Extract the number from the button's id
+            const number = this.id.replace(/[^\d]/g, '');
+            // Find the corresponding dice
+            const dice = document.getElementById(`dice${number}`);
+            // Toggle the dice's background color between green and beige
+            if (dice) {
+                if (dice.style.backgroundColor === 'green') {
+                    dice.style.backgroundColor = 'beige';
+                } else {
+                    dice.style.backgroundColor = 'green';
+                }
+            }
+        });
+    });
+});
+
 class Dice {
     constructor() {
         this.value = 0;

@@ -1,0 +1,45 @@
+.outtercontainer{
+    display: flex;
+}
+
+
+.title{
+    font-size: 60px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5%;
+    margin-bottom: 5%;
+
+}
+
+.roll{
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5%;
+    margin-bottom: 5%;
+
+
+}
+
+.innercontainer{
+    
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    background-color: beige;
+}
+
+.innercontainer_lock{
+    
+    width: 100px;
+    height: 20px;
+    border: 1px solid black;
+    margin-top: 3%;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
