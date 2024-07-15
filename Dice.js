@@ -140,7 +140,6 @@ class Yahtzee {
         }
     }
 }
-
 const yahtzee = new Yahtzee()
 
 const updateScore = () => {
@@ -187,25 +186,43 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('roll-count-lang').innerText = attemptsLeft !== 1 ? "times" : "time"
     }
 
-    const rollDice = document.getElementById('roll-button')
+    const rollDice = document.getElementById('roll-button');
     rollDice.addEventListener('click', function () {
-        const results = yahtzee.rollDice()
-        for (const field in diceFields) {
-            console.log("Fields", field)
-            const currentField = diceFields[`${field}`]
-            if (currentField.style.backgroundColor !== 'brown') {
-                diceFields[field].innerText = results.pop()
-            }
+    const results = yahtzee.rollDice();
+    for (const field in diceFields) {
+        console.log("Fields", field);
+        const currentField = diceFields[`${field}`];
+        if (currentField.style.backgroundColor !== 'brown') {
+            diceFields[field].innerText = results.pop();
         }
+    }
 
-        updateRemainingRollCount(yahtzee.state.attemptsLeft)
-        if (yahtzee.state.attemptsLeft === 0) {
-            rollDice.disabled = true
-            keepButtons.forEach(button => {
-                button.disabled = true
-            })
-        }
-    })
+    updateRemainingRollCount(yahtzee.state.attemptsLeft);
+
+    // Disable roll and keep buttons when no attempts are left
+    if (yahtzee.state.attemptsLeft === 0) {
+        rollDice.disabled = true;
+        keepButtons.forEach(button => {
+            button.disabled = true;
+        });
+        // Enable all score buttons
+        document.querySelectorAll('td > button').forEach(button => {
+            button.disabled = false;
+        });
+    } else {
+        // Optionally, ensure score buttons are disabled when there are attempts left
+        document.querySelectorAll('td > button').forEach(button => {
+            button.disabled = true;
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Initially, score buttons are disabled until the game state changes
+    document.querySelectorAll('td > button').forEach(button => {
+        button.disabled = true;
+    });
+});
 });
 
 document.addEventListener('DOMContentLoaded', function () {
