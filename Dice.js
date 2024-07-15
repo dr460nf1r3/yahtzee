@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const dice = document.getElementById(`dice${number}`);
             // Toggle the dice's background color between green and beige
             if (dice) {
-                if (dice.style.backgroundColor === 'green') {
+                if (dice.style.backgroundColor === 'brown') {
                     dice.style.backgroundColor = 'beige';
                 } else {
-                    dice.style.backgroundColor = 'green';
+                    dice.style.backgroundColor = 'brown';
                 }
             }
         });
