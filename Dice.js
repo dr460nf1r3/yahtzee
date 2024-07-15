@@ -1,9 +1,8 @@
 // Create a new class for solving points in Yahtzee
 class Yahtzee {
     dice = [];
-    state = {diceCount: 5, attemptsLeft: 3};
+    state = {diceCount: 5, attemptsLeft: 3, pointsSum: 0};
     diceKeep = []
-    pointsSum = 0;
 
     remainingSection = {
         upperSection: ["ones", "twos", "threes", "fours", "fives", "sixes"],
@@ -41,101 +40,92 @@ class Yahtzee {
         return diceRolled;
     }
 
-    playRound() {
-        let i = 0
-        while (this.diceCount > 0 || i < 3) {
-            this.rollDice(this.diceCount);
-            this.selectDice([0]);
-            console.log(this.diceKeep, this.diceCount)
-            i++
-        }
-        this.twos()
-    }
-
     resetAttempts() {
         this.state.attempt = 1;
         this.state.diceCount = 5;
+        console.log("Resetting attempts", this.state)
     }
 
     ones() {
         this.selectionDone("upperSection", "ones")
         this.resetAttempts()
-        this.pointsSum += this.diceKeep.filter(die => die === 1).length;
+        this.state.pointsSum += this.diceKeep.filter(die => die === 1).length;
     }
 
     twos() {
         this.selectionDone("upperSection", "twos")
         this.resetAttempts()
-        this.pointsSum += this.diceKeep.filter(die => die === 2).length * 2;
+        this.state.pointsSum += this.diceKeep.filter(die => die === 2).length * 2;
     }
 
     threes() {
         this.selectionDone("upperSection", "threes")
         this.resetAttempts()
-        this.pointsSum += this.diceKeep.filter(die => die === 3).length * 3;
+        this.state.pointsSum += this.diceKeep.filter(die => die === 3).length * 3;
     }
 
     fours() {
         this.selectionDone("upperSection", "fours")
         this.resetAttempts()
-        this.pointsSum += this.diceKeep.filter(die => die === 4).length * 4;
+        this.state.pointsSum += this.diceKeep.filter(die => die === 4).length * 4;
     }
 
     fives() {
         this.selectionDone("upperSection", "fives")
         this.resetAttempts()
-        this.pointsSum += this.diceKeep.filter(die => die === 5).length * 5;
+        this.state.pointsSum += this.diceKeep.filter(die => die === 5).length * 5;
     }
 
     sixes() {
         this.selectionDone("upperSection", "sixes")
         this.resetAttempts()
-        this.pointsSum += this.diceKeep.filter(die => die === 6).length * 6;
+        this.state.pointsSum += this.diceKeep.filter(die => die === 6).length * 6;
     }
 
     chance() {
         this.selectionDone("lowerSection", "chance")
         this.resetAttempts()
-        this.pointsSum += this.sum();
+        this.state.pointsSum += this.sum();
     }
 
     yahtzee() {
         this.selectionDone("lowerSection", "yahtzee")
         this.resetAttempts()
-        this.pointsSum += 50
+        this.state.pointsSum += 50
     }
 
     fullHouse() {
         this.selectionDone("lowerSection", "fullHouse")
         this.resetAttempts()
-        this.pointsSum += 25
+        this.state.pointsSum += 25
     }
 
     fourOfAKind() {
         this.selectionDone("lowerSection", "fourOfAKind")
         this.resetAttempts()
-        this.pointsSum += this.sum()
+        this.state.pointsSum += this.sum()
     }
 
     threeOfAKind() {
         this.selectionDone("lowerSection", "threeOfAKind")
         this.resetAttempts()
-        this.pointsSum += this.sum()
+        this.state.pointsSum += this.sum()
     }
 
     smallStraight() {
         this.selectionDone("lowerSection", "smallStraight")
         this.resetAttempts()
-        this.pointsSum += 30
+        this.state.pointsSum += 30
     }
 
     largeStraight() {
         this.selectionDone("lowerSection", "largeStraight")
         this.resetAttempts()
-        this.pointsSum += 40
+        this.state.pointsSum += 40
     }
 
     selectionDone(section, method) {
+        console.log("Selection done", section, method)
         const sectionIndex = this.remainingSection[`${section}`].indexOf(`${method}`)
         this.remainingSection[`${section}`].splice(sectionIndex, 1)
     }
@@ -143,17 +133,22 @@ class Yahtzee {
     removeSelection(method) {
         this.selectionDone("upperSection", method)
     }
+
+    bonusPoints() {
+        if (this.state.pointsSum > 63) {
+            this.state.pointsSum += 35
+        }
+    }
 }
 
+const yahtzee = new Yahtzee()
 
-function playYahtzee() {
-    const yahtzee = new Yahtzee();
-    while (yahtzee.remainingSection.upperSection.length > 0) {
-        yahtzee.playRound();
-    }
-    while (yahtzee.remainingSection.lowerSection.length > 0) {
-        yahtzee.playRound();
-    }
+const updateScore = () => {
+    document.getElementById('score-info').innerText = yahtzee.state.pointsSum.toString()
+    console.log("UPDATE SCORE", yahtzee.state.pointsSum)
+}
+const updateGameState = () => {
+
 }
 
 
@@ -187,111 +182,82 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('dice3'),
         document.getElementById('dice4'),
         document.getElementById('dice5')]
-
     const updateRemainingRollCount = (attemptsLeft) => {
         document.getElementById('roll-count').innerText = attemptsLeft
         document.getElementById('roll-count-lang').innerText = attemptsLeft !== 1 ? "times" : "time"
-    }
-    const updateScore = () => {
-        document.getElementById('score-info').innerText = yahtzee.pointsSum.toString()
     }
 
     const rollDice = document.getElementById('roll-button')
     rollDice.addEventListener('click', function () {
         const results = yahtzee.rollDice()
-        console.log("Results", results)
         for (const field in diceFields) {
             console.log("Fields", field)
             const currentField = diceFields[`${field}`]
             if (currentField.style.backgroundColor !== 'brown') {
-                diceFields[field].innerText = results[field]
+                diceFields[field].innerText = results.pop()
             }
         }
-        updateRemainingRollCount(yahtzee.state.attemptsLeft)
 
+        updateRemainingRollCount(yahtzee.state.attemptsLeft)
         if (yahtzee.state.attemptsLeft === 0) {
             rollDice.disabled = true
+            keepButtons.forEach(button => {
+                button.disabled = true
+            })
         }
     })
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Select all score buttons
-    const scoreButtons = document.querySelectorAll('button[id]');
+    const scoreButtons = document.querySelectorAll('td > button');
+    console.log(scoreButtons)
     scoreButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
+            console.log("IN SWITCH", button.id)
             // Call the function with the same name as the button's id
-            if (this.id == "ones"){
-                yahtzee.ones();
+            switch (button.id) {
+                case "ones":
+                    yahtzee.ones();
+                    break;
+                case "twos":
+                    yahtzee.twos();
+                    break;
+                case "threes":
+                    yahtzee.threes();
+                    break;
+                case "fours":
+                    yahtzee.fours();
+                    break;
+                case "fives":
+                    yahtzee.fives();
+                    break;
+                case "sixes":
+                    yahtzee.sixes();
+                    break;
+                case "ThreeOfAKind":
+                    yahtzee.threeOfAKind();
+                    break;
+                case "FourOfAKind":
+                    yahtzee.fourOfAKind();
+                    break;
+                case "FullHouse":
+                    yahtzee.fullHouse();
+                    break;
+                case "SmallStraight":
+                    yahtzee.smallStraight();
+                    break;
+                case "LageStraight":
+                    yahtzee.largeStraight();
+                    break;
+                case "Yahtzee":
+                    yahtzee.yahtzee();
+                    break;
             }
-            else if (this.id == "twos"){
-                yahtzee.twos();
-            }
-            else if (this.id == "threes"){
-                yahtzee.threes();
-            }
-            else if (this.id == "fours"){
-                yahtzee.fours();
-            }
-            else if (this.id == "fives"){
-                yahtzee.fives();
-            }
-            else if (this.id == "sixes"){
-                yahtzee.sixes();
-            }
-            else if (this.id == "threeOfAKind"){
-                yahtzee.threeOfAKind();
-            }
-            else if (this.id == "fourOfAKind"){
-                yahtzee.fourOfAKind();
-            }
-            else if (this.id == "fullHouse"){
-                yahtzee.fullHouse();
-            }
-            else if (this.id == "smallStraight"){
-                yahtzee.smallStraight();
-            }
-            else if (this.id == "largeStraight"){
-                yahtzee.largeStraight();
-            }
-            else if (this.id == "yahtzee"){
-                yahtzee.yahtzee();
-            }
-            else if (this.id == "chance"){
-                yahtzee.chance();
-            }
-        
+
+            button.disabled = true;
+            updateScore();
         });
     });
 });
-
-const yahtzee = new Yahtzee()
-
-class Dice {
-    constructor() {
-        this.value = 0;
-    }
-
-    roll() {
-        this.value = Math.floor(Math.random() * 6) + 1;
-        return this.value;
-    }
-}
-
-const Results = [0, 0, 0, 0, 0];
-
-const dice1 = new Dice();
-const dice2 = new Dice();
-const dice3 = new Dice();
-const dice4 = new Dice();
-const dice5 = new Dice();
-
-Results[0] = dice1.roll();
-Results[1] = dice2.roll();
-Results[2] = dice3.roll();
-Results[3] = dice4.roll();
-Results[4] = dice5.roll();
-
-console.log(Results);
-
 

@@ -6,7 +6,6 @@
     <title>Yahtzee</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' href='main.css'>
-    <script type="module" src="yahtzee.js"></script>
     <script src="Dice.js"></script>
 </head>
 <body>
@@ -36,13 +35,8 @@
             <button class="innercontainer_lock" id="keep4">Keep</button>
             <button class="innercontainer_lock" id="keep5">Keep</button>
         </div>
-
         <div class="score">Your Score is: <a id="score-info">0</a></div>
-
-        </table>
-
     </div>
-
 
     <div class="outtercontainer_right">
         <table>
@@ -54,82 +48,108 @@
             </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Ones</td>
-                    <td id="scoreOnes">0</td>
-                    <td><button id="Ones">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Twos</td>
-                    <td id="scoreTwos">0</td>
-                    <td><button id="twos">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Threes</td>
-                    <td id="scoreThrees">0</td>
-                    <td><button id="threes">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Fours</td>
-                    <td id="scoreFours">0</td>
-                    <td><button id="fours">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Fives</td>
-                    <td id="scoreFives">0</td>
-                    <td><button id="fives">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Sixes</td>
-                    <td id="scoreSixes">0</td>
-                    <td><button id="sixes">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Bonus (get 35 points if you get to 63 in the upper Section)</td>
-                    <td id="scoreBonus">0</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Score upper Section:</td>
-                    <td>0</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Three of a Kind</td>
-                    <td id="scoreThreeOfAKind">0</td>
-                    <td><button id="ThreeOfAKind">Score</button></td>
+            <tr>
+                <td>Ones</td>
+                <td id="scoreOnes">0</td>
+                <td>
+                    <button id="ones" class="upper">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Twos</td>
+                <td id="scoreTwos">0</td>
+                <td>
+                    <button id="twos" class="upper">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Threes</td>
+                <td id="scoreThrees">0</td>
+                <td>
+                    <button id="threes" class="upper">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Fours</td>
+                <td id="scoreFours">0</td>
+                <td>
+                    <button id="fours" class="upper">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Fives</td>
+                <td id="scoreFives">0</td>
+                <td>
+                    <button id="fives" class="upper">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Sixes</td>
+                <td id="scoreSixes">0</td>
+                <td>
+                    <button id="sixes" class="upper">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Bonus (get 35 points if you get to 63 in the upper Section)</td>
+                <td id="scoreBonus">0</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Score upper Section:</td>
+                <td>0</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Three of a Kind</td>
+                <td id="scoreThreeOfAKind">0</td>
+                <td>
+                    <button id="ThreeOfAKind" class="lower">Score</button>
+                </td>
 
-                </tr>
-                <tr>
-                    <td>Four of a Kind</td>
-                    <td id="scoreFourOfAKind">0</td>
-                    <td><button id="FourOfAKind">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Full House</td>
-                    <td id="scoreFullHouse">0</td>
-                    <td><button id="FullHouse">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Small Straight</td>
-                    <td id="scoreSmallStraight">0</td>
-                    <td><button id="SmallStraight">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Large Straight</td>
-                    <td id="scoreLargeStraight">0</td>
-                    <td><button id="LageStraight">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Yahtzee</td>
-                    <td id="scoreYahtzee">0</td>
-                    <td><button id="Yahtzee">Score</button></td>
-                </tr>
-                <tr>
-                    <td>Chance</td>
-                    <td id="scoreChance">0</td>
-                    <td><button id="Chance">Score</button></td>
-                </tr>
+            </tr>
+            <tr>
+                <td>Four of a Kind</td>
+                <td id="scoreFourOfAKind">0</td>
+                <td>
+                    <button id="FourOfAKind" class="lower">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Full House</td>
+                <td id="scoreFullHouse">0</td>
+                <td>
+                    <button id="FullHouse" class="lower">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Small Straight</td>
+                <td id="scoreSmallStraight">0</td>
+                <td>
+                    <button id="SmallStraight" class="lower">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Large Straight</td>
+                <td id="scoreLargeStraight">0</td>
+                <td>
+                    <button id="LageStraight" class="lower">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Yahtzee</td>
+                <td id="scoreYahtzee">0</td>
+                <td>
+                    <button id="Yahtzee" class="lower">Score</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Chance</td>
+                <td id="scoreChance">0</td>
+                <td>
+                    <button id="Chance" class="lower">Score</button>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
