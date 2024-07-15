@@ -3,10 +3,11 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Yahzee</title>
+    <title>Yahtzee</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' href='main.css'>
-    <script src='Dice.js'></script>
+    <script type="module" src="yahtzee.js"></script>
+    <script src="Dice.js"></script>
 </head>
 <body>
     
@@ -14,7 +15,7 @@
 <div class="main-container">
     <div class="outtercontainer_left" >
         <div class="outtercontainer" >
-            <button class="roll">Roll</button>
+            <button id="roll-button" class="roll">Roll</button>
         </div>
         <div class="outtercontainer" >
             <div class="roles_left">You can roll "roles_left" more time(s)</div>
@@ -35,11 +36,11 @@
             <button class="innercontainer_lock" id="keep4">Keep</button>
             <button class="innercontainer_lock" id="keep5">Keep</button>
         </div>
-        
+
         <div class="score">Your Score is: "$Score"</div>
 
         </table>
-        
+
     </div>
 
 
@@ -97,7 +98,7 @@
                     <td>Three of a Kind</td>
                     <td id="scoreThreeOfAKind">0</td>
                     <td><button>Score</button></td>
-                
+
                 </tr>
                 <tr>
                     <td>Four of a Kind</td>

@@ -1,6 +1,6 @@
 // Create a new class for solving points in Yahtzee
 
-class Yahtzee {
+export class Yahtzee {
     dice = [];
     diceCount = 5;
     diceKeep = []
@@ -26,10 +26,10 @@ class Yahtzee {
         this.diceCount = this.diceCount - dice.length;
     }
 
-    rollDice(count) {
+    rollDice() {
         // count = Number of dice to roll
         let diceRolled = [];
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < this.diceCount; i++) {
             diceRolled.push(Math.floor(Math.random() * 6) + 1);
         }
         this.dice = diceRolled;
@@ -136,5 +136,3 @@ function playYahtzee() {
         yahtzee.playRound();
     }
 }
-
-playYahtzee();
