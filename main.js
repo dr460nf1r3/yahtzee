@@ -57,7 +57,7 @@ class Yahtzee {
     selectDice(dice) {
         // Add the dice to the tempKeep array and decrement the dice count if it's not already in the array
         if (!this.state.tempKeep.hasOwnProperty(dice.id)) {
-            this.state.tempKeep[dice.id] = dice.innerText
+            this.state.tempKeep[dice.id] = dice.id.replace(/\D/g, '');
             this.state.diceCount--;
         } else {
             this.state.tempKeep[dice.id] = undefined
@@ -391,9 +391,7 @@ const finishRollingDicePhase = () => {
 
     // Enable all score buttons that are not filled yet
     document.querySelectorAll('td > button').forEach(button => {
-        if (!button.classList.contains("filled")) {
-            button.disabled = false;
-        }
+        button.disabled = button.classList.contains(`filledBy-${yahtzeeGame.state.playerTurn}`);
     });
 }
 
@@ -416,9 +414,6 @@ const finishRun = () => {
         dice.classList.remove("keeping")
         dice.innerText = ""
     })
-    scoreButtons.forEach(button => {
-        button.disabled = true;
-    })
 
     updateRemainingRollCount(player.state.attemptsLeft);
     player.diceKeep = []
@@ -433,6 +428,11 @@ const finishRun = () => {
 
     // Update the player turn
     yahtzeeGame.nextPlayer()
+    scoreButtons.forEach(button => {
+        button.disabled = true
+    })
+    const currentPlayerElement = document.getElementById('current-player')
+    currentPlayerElement.innerText = yahtzeeGame.currentPlayer().state.name
 }
 
 
@@ -560,8 +560,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     score = player.yahtzee();
                     break;
             }
-            button.disabled = true;
-            button.classList.add("filled")
+            button.classList.add(`filledBy-${yahtzeeGame.state.playerTurn}`)
             scoreElement.innerText = score.toString();
             finishRun()
         });
