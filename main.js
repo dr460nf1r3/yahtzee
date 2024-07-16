@@ -146,10 +146,12 @@ class Yahtzee {
             3: 0
         }
 
-        Object.keys(results).forEach((key) => {
-            Object.keys(counts).forEach((number) => {
-                if (counts[number] === key) {
-                    results[key] = number
+        // Loop through the counts and check if we have a full house,
+        // while ensuring both being an integer when comparing values
+        Object.keys(counts).forEach((key) => {
+            Object.keys(results).forEach((amount) => {
+                if (parseInt(counts[key]) === parseInt(amount)) {
+                    results[amount] = counts[key]
                 }
             })
         })
@@ -160,8 +162,10 @@ class Yahtzee {
         let score
         if (results[2] === 0 || results[3] === 0) {
             score = 0
+            console.log("No full house")
         } else {
             score = 25
+            console.log("Full house")
         }
         this.addPoints(score, false)
         return score
@@ -242,7 +246,7 @@ class Yahtzee {
             bonusTextElement.innerText = "None :("
         }
         upperScoreSumElement.innerText = this.state.points.upperSection
-        yahtzee.state.bonusCalculated = true
+        this.state.bonusCalculated = true
     }
 
     /**
@@ -271,10 +275,8 @@ class Yahtzee {
             } else {
                 score = this.sum()
             }
-            console.log("Score hit")
         } else {
             score = 0
-            console.log("Score not hit")
         }
 
         return score
@@ -287,7 +289,9 @@ class Yahtzee {
      */
     isValidStraight(kind) {
         let straight = 0;
+        this.diceKeep = [1, 5, 2, 3, 4];
         let dice = this.diceKeep.sort();
+        straight = 1;
         for (let i = 0; i < dice.length - 1; i++) {
             if (dice[i] + 1 === dice[i + 1]) {
                 straight++;
@@ -321,8 +325,51 @@ class Yahtzee {
     }
 }
 
-// Instantiate the Yahtzee class
-const yahtzee = new Yahtzee()
+class YahtzeeGame {
+    players = {}
+    state = {
+        playerTurn: 0
+    }
+
+    /**
+     * Create a Yahtzee game with a number of players.
+     * It allows creating a game with multiple players, but the current implementation hardcodes it to two players.
+     * @param names The names of the players as an array of strings
+     */
+    constructor(...names) {
+        for (const name of names) {
+            const index = Object.keys(this.players).length === 0 ? 0 : Object.keys(this.players).length++
+            this.players[`${index}`] = new Yahtzee(name)
+        }
+    }
+
+    /**
+     * Add a player to the game.
+     * @param name The name of the player to add
+     */
+    addPlayer(name) {
+        this.players[this.players.length++] = new Yahtzee(name)
+    }
+
+    /**
+     * Get the current player Yahtzee object.
+     * @return {*} The current player object
+     */
+    currentPlayer() {
+        return this.players[this.state.playerTurn]
+    }
+
+    /**
+     * Move to the next player in the game.
+     */
+    nextPlayer() {
+        const isLastPlayer = this.state.playerTurn === Object.keys(this.players).length - 1
+        this.state.playerTurn = isLastPlayer ? 0 : this.state.playerTurn + 1
+    }
+}
+
+// Instantiate the Yahtzee class with hardcoded player names
+const yahtzeeGame = new YahtzeeGame("Player 1", "Player 2")
 
 /**
  * Updates the remaining roll count on the page including correct pluralization.
@@ -358,8 +405,9 @@ const finishRun = () => {
     const rollDice = document.getElementById('roll-button')
     const scoreDisplay = document.getElementById('score-info')
     const scoreButtons = document.querySelectorAll('td > button')
+    const player = yahtzeeGame.currentPlayer()
 
-    scoreDisplay.innerText = yahtzee.state.points.total
+    scoreDisplay.innerText = player.state.points.total
     rollDice.disabled = false
     keepButtons.forEach(button => {
         const number = button.id.replace(/\D/g, '');
@@ -372,22 +420,27 @@ const finishRun = () => {
         button.disabled = true;
     })
 
-    updateRemainingRollCount(yahtzee.state.attemptsLeft);
-    yahtzee.diceKeep = []
+    updateRemainingRollCount(player.state.attemptsLeft);
+    player.diceKeep = []
 
     // React to special stages of the game, e.g., a fully filled upper section
-    if (yahtzee.remainingSection.upperSection.length === 0 && !yahtzee.state.bonusCalculated) {
-        yahtzee.bonusPoints()
-    } else if (yahtzee.remainingSection.upperSection.length === 0 && yahtzee.remainingSection.lowerSection.length === 0) {
+    if (player.remainingSection.upperSection.length === 0 && !player.state.bonusCalculated) {
+        player.bonusPoints()
+    } else if (player.remainingSection.upperSection.length === 0 && player.remainingSection.lowerSection.length === 0) {
         // In case all sections are filled, we want to end the game
-        alert(`Game over! Your final score is ${yahtzee.state.points.total}.`)
+        alert(`Game over! Your final score is ${player.state.points.total}.`)
     }
+
+    // Update the player turn
+    yahtzeeGame.nextPlayer()
 }
 
 
 document.addEventListener('DOMContentLoaded', function () {
     // Add event listener to each "Keep" button
     const keepButtons = document.querySelectorAll('.innercontainer_lock');
+    const player = yahtzeeGame.currentPlayer()
+
     keepButtons.forEach(button => {
         button.addEventListener('click', function () {
             // Extract the number from the button's id
@@ -404,9 +457,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Select the dice via our Yahtzee class
-            yahtzee.selectDice(dice)
+            player.selectDice(dice)
 
-            if (yahtzee.state.diceCount === 0) {
+            if (player.state.diceCount === 0) {
                 finishRollingDicePhase()
             }
         });
@@ -422,11 +475,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const rollDice = document.getElementById('roll-button');
     rollDice.addEventListener('click', function () {
+        const player = yahtzeeGame.currentPlayer();
+
         // Move the dice from the tempKeep array to the diceKeep array, as the user has rolled the dice
-        yahtzee.moveTempKeepToKeep()
+        player.moveTempKeepToKeep()
 
         // Roll the dice and update each field that hasn't been selected already
-        const results = yahtzee.rollDice();
+        const results = player.rollDice();
         updateDiceDisplay(results);
 
         // Create a (non-referencing) copy of the result array to avoid modifying the original array
@@ -438,12 +493,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        updateRemainingRollCount(yahtzee.state.attemptsLeft);
+        updateRemainingRollCount(player.state.attemptsLeft);
 
         // Disable roll and keep buttons when no attempts are left
-        if (yahtzee.state.attemptsLeft === 0) {
+        if (player.state.attemptsLeft === 0) {
             finishRollingDicePhase()
-        } else if (yahtzee.state.attemptsLeft !== 3) {
+        } else if (player.state.attemptsLeft !== 3) {
             document.querySelectorAll('.outtercontainer > button').forEach(button => {
                 button.disabled = false;
             });
@@ -464,45 +519,46 @@ document.addEventListener('DOMContentLoaded', function () {
     const scoreButtons = document.querySelectorAll('td > button');
     scoreButtons.forEach(button => {
         button.addEventListener('click', function () {
+            const player = yahtzeeGame.currentPlayer();
             // Call the function with the same name as the button's id
-            const scoreElement = document.getElementById(`score-${button.id}`)
+            const scoreElement = document.getElementById(`score-${button.id}-${yahtzeeGame.state.playerTurn + 1}`)
             let score = 0
             switch (button.id) {
                 case "ones":
-                    score = yahtzee.onesToSixes(1);
+                    score = player.onesToSixes(1);
                     break;
                 case "twos":
-                    score = yahtzee.onesToSixes(2);
+                    score = player.onesToSixes(2);
                     break;
                 case "threes":
-                    score = yahtzee.onesToSixes(3);
+                    score = player.onesToSixes(3);
                     break;
                 case "fours":
-                    score = yahtzee.onesToSixes(4);
+                    score = player.onesToSixes(4);
                     break;
                 case "fives":
-                    score = yahtzee.onesToSixes(5);
+                    score = player.onesToSixes(5);
                     break;
                 case "sixes":
-                    score = yahtzee.onesToSixes(6);
+                    score = player.onesToSixes(6);
                     break;
                 case "ThreeOfAKind":
-                    score = yahtzee.threeOfAKind();
+                    score = player.threeOfAKind();
                     break;
                 case "FourOfAKind":
-                    score = yahtzee.fourOfAKind();
+                    score = player.fourOfAKind();
                     break;
                 case "FullHouse":
-                    score = yahtzee.fullHouse();
+                    score = player.fullHouse();
                     break;
                 case "SmallStraight":
-                    score = yahtzee.smallStraight();
+                    score = player.smallStraight();
                     break;
                 case "LargeStraight":
-                    score = yahtzee.largeStraight();
+                    score = player.largeStraight();
                     break;
                 case "Yahtzee":
-                    score = yahtzee.yahtzee();
+                    score = player.yahtzee();
                     break;
             }
             button.disabled = true;
@@ -515,7 +571,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function updateDiceDisplay(diceArray) {
     const diceElement = document.getElementById('dice1');
-    console.log(diceElement, )
+    console.log(diceElement, diceArray)
     diceElement.className = 'innercontainer';
 
     if (diceArray[0] === 1)
