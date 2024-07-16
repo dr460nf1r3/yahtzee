@@ -571,6 +571,8 @@ document.addEventListener('DOMContentLoaded', function () {
 function updateDiceDisplay(diceElements) {
     for (let element in diceElements) {
         // Ensure no dice classes are set
+        diceElements[element].classList = ["innercontainer"];
+
         switch (diceElements[element].innerText) {
             case "1":
                 diceElements[element].classList.add('dice-1');
@@ -591,6 +593,8 @@ function updateDiceDisplay(diceElements) {
                 diceElements[element].classList.add('dice-6');
                 break;
         }
+
+
     }
 }
 

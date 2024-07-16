@@ -25,7 +25,6 @@
 
 
 .innercontainer {
-
     width: 100px;
     height: 100px;
     border: 1px solid black;
@@ -33,6 +32,7 @@
     justify-content: center;
     align-items: center;
     background-color: beige;
+    color: rgba(255, 255, 255, 0.5)
 }
 
 .innercontainer_lock {
@@ -75,8 +75,7 @@ th {
 }
 
 .outtercontainer_left {
-    background:
-    radial-gradient(hsl(138, 100%, 27%) 4%, hsl(161, 100%, 18%) 9%, hsla(0, 100%, 20%, 0) 9%) 0 0,
+    background: radial-gradient(hsl(138, 100%, 27%) 4%, hsl(161, 100%, 18%) 9%, hsla(0, 100%, 20%, 0) 9%) 0 0,
     radial-gradient(hsl(152, 100%, 27%) 4%, hsl(163, 100%, 18%) 8%, hsla(0, 100%, 20%, 0) 10%) 50px 50px,
     radial-gradient(hsla(152, 100%, 30%, 0.8) 20%, hsla(0, 100%, 20%, 0)) 50px 0,
     radial-gradient(hsla(152, 100%, 30%, 0.8) 20%, hsla(0, 100%, 20%, 0)) 0 50px,
@@ -118,7 +117,7 @@ body {
     background-size: cover;
 }
 
-.dice-1, .dice-2, .dice-3, .dice-4, .dice-5 .dice-6 {
+.dice-1, .dice-2, .dice-3, .dice-4, .dice-5, .dice-6 {
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100% 100%;
@@ -126,91 +125,82 @@ body {
 
 .dice-1 {
     background-image: url('./assets/dice-one-svgrepo-com.svg');
-    @apply dice-general
 }
 
 .dice-2 {
     background-image: url('./assets/dice-two-svgrepo-com.svg');
-    @apply dice-general
 }
 
 .dice-3 {
     background-image: url('./assets/dice-three-svgrepo-com.svg');
-    @apply dice-general
 }
 
 .dice-4 {
     background-image: url('./assets/dice-four-svgrepo-com.svg');
-    @apply dice-general
 }
 
 .dice-5 {
     background-image: url('./assets/dice-five-svgrepo-com.svg');
-    @apply dice-general
 }
 
 .dice-6 {
     background-image: url('./assets/dice-six-svgrepo-com.svg');
-    @apply dice-general
 }
 
-
-.upper{
-
+.upper {
     color: #017845;
-
 }
 
-.lower{
-
+.lower {
     color: #017845;
-
 }
 
-.reset{
+.reset {
     font-size: 20px;
     font-weight: bold;
     text-align: center;
     color: white;
     background-color: rgb(148, 39, 39);
     filter: brightness(110%);
-    text-align: center;
 }
 
-.reset_container{
-
+.reset_container {
     display: flex;
-    justify-content:center;
+    justify-content: center;
     margin-bottom: 5%;
 }
-
 
 table {
     background: rgba(255, 255, 255, 0.922);
     border-radius: 0.25em;
     border-collapse: collapse;
     margin: 1em;
-  }
-  th {
+}
+
+th {
     border-bottom: 1px solid #364043;
     color: #000000;
     font-size: 0.85em;
     font-weight: 600;
     padding: 0.5em 1em;
     text-align: left;
-  }
-  td {
-    color:#014a2a;
+}
+
+td {
+    color: #014a2a;
     font-weight: 400;
     padding: 0.65em 1em;
     border: black;
-  }
-  .disabled td {
+}
+
+.disabled td {
     color: #4F5F64;
-  }
-  tbody tr {
+}
+
+tbody tr {
     transition: background 0.25s ease;
-  }
-  tbody tr:hover {
+}
+
+tbody tr:hover {
     background: #cb8b82;
-  }
+}
