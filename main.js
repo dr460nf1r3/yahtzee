@@ -407,6 +407,7 @@ const finishRun = () => {
     const scoreButtons = document.querySelectorAll('td > button')
     const player = yahtzeeGame.currentPlayer()
 
+
     scoreDisplay.innerText = player.state.points.total
     rollDice.disabled = false
     keepButtons.forEach(button => {
@@ -427,22 +428,30 @@ const finishRun = () => {
         // In case all sections are filled, we want to end the game
         alert(`Game over! Your final score is ${player.state.points.total}.`)
     }
-
+    
+  
+    
+    
+    
     // Update the player turn
     yahtzeeGame.nextPlayer()
     scoreButtons.forEach(button => {
         button.disabled = true
     })
+    
     const currentPlayerElement = document.getElementById('current-player')
     currentPlayerElement.innerText = yahtzeeGame.currentPlayer().state.name
-}
+    
+}   
 
 
 document.addEventListener('DOMContentLoaded', function () {
     // Add event listener to each "Keep" button
     const keepButtons = document.querySelectorAll('.innercontainer_lock');
     const player = yahtzeeGame.currentPlayer()
-
+    const currentPlayerElement = document.getElementById('current-player')
+    currentPlayerElement.innerText ="Player 1";
+    
     keepButtons.forEach(button => {
         button.addEventListener('click', function () {
             // Extract the number from the button's id
