@@ -532,3 +532,8 @@ function updateDiceDisplay(diceArray) {
         diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('resetGameButton').addEventListener('click', function() {
+        location.reload();
+    });
+});
