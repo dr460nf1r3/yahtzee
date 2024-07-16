@@ -96,6 +96,10 @@ body {
     font-family: "Fira Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
-    <!-- "https://unsplash.com/photos/3-white-dice-on-black-surface-hAdfTKFXmwM" -->
+    /* "https://unsplash.com/photos/3-white-dice-on-black-surface-hAdfTKFXmwM"*/
     background-image: url("./assets/background.jpg");
+}
+
+.dice-1{
+    background-color: purple;
 }

@@ -320,7 +320,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 diceFields[field].innerText = results.pop().toString();
             }
         }
-
+        updateDiceDisplay(yahtzee.dice);
+        console.log(yahtzee.dice);
+        debugger;
         updateRemainingRollCount(yahtzee.state.attemptsLeft);
 
         // Disable roll and keep buttons when no attempts are left
@@ -395,3 +397,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+function updateDiceDisplay(){
+    const diceElement = document.getElementById('dice1');
+    diceElement.className = 'innercontainer'; 
+
+    if (yahtzee.dice[0] === 1)
+        diceElement.classList.add('dice-1');
+    else if (yahtzee.dice[0] === 2)
+        diceElement.classList.add('dice-1');
+    else if (yahtzee.dice[0] === 3)
+        diceElement.classList.add('dice-1');
+    else if (yahtzee.dice[0] === 4)
+        diceElement.classList.add('dice-1');
+    else if (yahtzee.dice[0] === 5)
+        diceElement.classList.add('dice-1');
+    else if (yahtzee.dice[0] === 6)
+        diceElement.classList.add('dice-1');
+}
+
