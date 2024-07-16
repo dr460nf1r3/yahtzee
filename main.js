@@ -5,7 +5,7 @@
  * @property {Object} state - Object to store the current state of the game
  * @property {Number} state.diceCount - Number of dice to roll
  * @property {Number} state.attemptsLeft - Number of attempts left
- * @property {Number} state.pointsSum - Sum of the points
+ * @property {Number} state.points.total - Sum of the points
  * @property {Boolean} state.bonusCalculated - Whether the bonus has been calculated
  * @property {Number[]} diceKeep - Array to store the dice that are kept, used for calculating the score
  * @property {Object} remainingSection - Object to store the remaining sections of the game
@@ -19,7 +19,10 @@ class Yahtzee {
         name: "Player 1",
         diceCount: 5,
         attemptsLeft: 3,
-        pointsSum: 0,
+        points: {
+            upperSection: 0,
+            total: 0
+        },
         bonusCalculated: false,
     };
     diceKeep = []
@@ -95,7 +98,7 @@ class Yahtzee {
         this.selectionDone("upperSection", this.remainingSection.upperSection[multiplier - 1])
         this.resetAttempts()
         const score = this.diceKeep.filter(number => number === multiplier).length * multiplier;
-        this.state.pointsSum += score;
+        this.state.points.total += score;
         return score
     }
 
@@ -107,7 +110,7 @@ class Yahtzee {
         this.selectionDone("lowerSection", "chance")
         this.resetAttempts()
         const score = this.sum();
-        this.state.pointsSum += score;
+        this.state.points += score;
         return score
     }
 
@@ -116,10 +119,10 @@ class Yahtzee {
      * @returns {Number} The points gained for this category
      */
     yahtzee() {
+        const score = this.hasHitCountPoints(5)
         this.selectionDone("lowerSection", "yahtzee")
         this.resetAttempts()
-        const score = 50
-        this.state.pointsSum += score;
+        this.state.points.total += score;
         return score
     }
 
@@ -128,10 +131,34 @@ class Yahtzee {
      * @returns {Number} The points gained for this category
      */
     fullHouse() {
+        const counts = {}
+        this.diceKeep.forEach(function (x) {
+            counts[x] = (counts[x] || 0) + 1;
+        });
+
+        const results = {
+            2: 0,
+            3: 0
+        }
+
+        Object.keys(results).forEach((key) => {
+            Object.keys(counts).forEach((number) => {
+                if (counts[number] === key) {
+                    results[key] = number
+                }
+            })
+        })
+
         this.selectionDone("lowerSection", "fullHouse")
         this.resetAttempts()
-        const score = 25
-        this.state.pointsSum += score;
+
+        let score
+        if (results[2] === 0 || results[3] === 0) {
+            score = 0
+        } else {
+            score = 25
+        }
+        this.state.points.total += score;
         return score
     }
 
@@ -140,10 +167,10 @@ class Yahtzee {
      * @returns {Number} The points gained for this category
      */
     fourOfAKind() {
+        const score = this.hasHitCountPoints(4)
         this.selectionDone("lowerSection", "fourOfAKind")
         this.resetAttempts()
-        const score = this.sum()
-        this.state.pointsSum += score;
+        this.state.points.total += score;
         return score
     }
 
@@ -152,10 +179,10 @@ class Yahtzee {
      * @returns {Number} The points gained for this category
      */
     threeOfAKind() {
+        const score = this.hasHitCountPoints(3)
         this.selectionDone("lowerSection", "threeOfAKind")
         this.resetAttempts()
-        const score = this.sum()
-        this.state.pointsSum += score;
+        this.state.points.total += score;
         return score
     }
 
@@ -166,8 +193,9 @@ class Yahtzee {
     smallStraight() {
         this.selectionDone("lowerSection", "smallStraight")
         this.resetAttempts()
-        const score = 30
-        this.state.pointsSum += score;
+        let score;
+        this.isValidStraight(4) ? score = 30 : score = 0
+        this.state.points.total += score;
         return score
     }
 
@@ -178,8 +206,9 @@ class Yahtzee {
     largeStraight() {
         this.selectionDone("lowerSection", "largeStraight")
         this.resetAttempts()
-        const score = 40
-        this.state.pointsSum += score;
+        let score;
+        this.isValidStraight(5) ? score = 40 : score = 0
+        this.state.points.total += score;
         return score
     }
 
@@ -200,13 +229,66 @@ class Yahtzee {
      */
     bonusPoints() {
         const bonusTextElement = document.getElementById('score-bonus')
-        if (this.state.pointsSum > 63) {
+        const upperScoreSumElement = document.getElementById("upper-sum")
+        if (this.state.points.total > 63) {
             bonusTextElement.innerText = "35"
-            this.state.pointsSum += 35
+            this.state.points.total += 35
         } else {
             bonusTextElement.innerText = "None :("
         }
+        upperScoreSumElement.innerText = this.state.points.total
         yahtzee.state.bonusCalculated = true
+    }
+
+    /**
+     * Check if the dice array contains a certain number of the same dice.
+     * @param count The number of dice to check for
+     * @return {number} The score if the dice array contains the given number of dice, 0 otherwise
+     */
+    hasHitCountPoints(count) {
+        const counts = {}
+        this.diceKeep.forEach(function (x) {
+            counts[x] = (counts[x] || 0) + 1;
+        });
+
+        let result
+        Object.keys(counts).forEach((number) => {
+            if (counts[number] >= count) {
+                result = number
+            }
+        })
+
+        let score
+        if (result) {
+            // Special case: this is a Yahtzee
+            if (count === 5) {
+                score = 50
+            } else {
+                score = this.sum()
+            }
+            console.log("Score hit")
+        } else {
+            score = 0
+            console.log("Score not hit")
+        }
+
+        return score
+    }
+
+    /**
+     * Check if the dice array contains a straight of a certain kind.
+     * @param kind The kind of straight to check for (4,5)
+     * @return {boolean} A boolean indicating whether the dice array contains a straight of the given kind
+     */
+    isValidStraight(kind) {
+        let straight = 0;
+        let dice = this.diceKeep.sort();
+        for (let i = 0; i < dice.length - 1; i++) {
+            if (dice[i] + 1 === dice[i + 1]) {
+                straight++;
+            }
+        }
+        return straight >= kind;
     }
 }
 
@@ -248,7 +330,7 @@ const finishRun = () => {
     const scoreDisplay = document.getElementById('score-info')
     const scoreButtons = document.querySelectorAll('td > button')
 
-    scoreDisplay.innerText = yahtzee.state.pointsSum
+    scoreDisplay.innerText = yahtzee.state.points.total
     rollDice.disabled = false
     keepButtons.forEach(button => {
         const number = button.id.replace(/\D/g, '');
@@ -262,13 +344,14 @@ const finishRun = () => {
     })
 
     updateRemainingRollCount(yahtzee.state.attemptsLeft);
+    yahtzee.diceKeep = []
 
     // React to special stages of the game, e.g., a fully filled upper section
     if (yahtzee.remainingSection.upperSection.length === 0 && !yahtzee.state.bonusCalculated) {
         yahtzee.bonusPoints()
     } else if (yahtzee.remainingSection.upperSection.length === 0 && yahtzee.remainingSection.lowerSection.length === 0) {
         // In case all sections are filled, we want to end the game
-        alert(`Game over! Your final score is ${yahtzee.state.pointsSum}.`)
+        alert(`Game over! Your final score is ${yahtzee.state.points.total}.`)
     }
 }
 
@@ -383,7 +466,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 case "SmallStraight":
                     score = yahtzee.smallStraight();
                     break;
-                case "LageStraight":
+                case "LargeStraight":
                     score = yahtzee.largeStraight();
                     break;
                 case "Yahtzee":
