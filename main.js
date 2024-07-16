@@ -5,7 +5,7 @@
  * @property {Object} state - Object to store the current state of the game
  * @property {Number} state.diceCount - Number of dice to roll
  * @property {Number} state.attemptsLeft - Number of attempts left
- * @property {Number} state.pointsSum - Sum of the points
+ * @property {Number} state.points.total - Sum of the points
  * @property {Boolean} state.bonusCalculated - Whether the bonus has been calculated
  * @property {Number[]} diceKeep - Array to store the dice that are kept, used for calculating the score
  * @property {Object} remainingSection - Object to store the remaining sections of the game
@@ -19,8 +19,12 @@ class Yahtzee {
         name: "Player 1",
         diceCount: 5,
         attemptsLeft: 3,
-        pointsSum: 0,
+        points: {
+            upperSection: 0,
+            total: 0
+        },
         bonusCalculated: false,
+        tempKeep: {}
     };
     diceKeep = []
 
@@ -48,11 +52,17 @@ class Yahtzee {
 
     /**
      * Selects the dice to keep and updates the remaining dice count.
-     * @param dice Number of the dice to select
+     * @param dice The dice HTMLElement to keep
      */
     selectDice(dice) {
-        this.diceKeep.push(dice);
-        this.state.diceCount = this.state.diceCount - 1;
+        // Add the dice to the tempKeep array and decrement the dice count if it's not already in the array
+        if (!this.state.tempKeep.hasOwnProperty(dice.id)) {
+            this.state.tempKeep[dice.id] = dice.innerText
+            this.state.diceCount--;
+        } else {
+            this.state.tempKeep[dice.id] = undefined
+            this.state.diceCount++
+        }
     }
 
     /**
@@ -66,15 +76,13 @@ class Yahtzee {
             diceRolled.push(Math.floor(Math.random() * 6) + 1);
         }
         this.dice = diceRolled;
-
-        this.state.attemptsLeft -= 1;
+        this.state.attemptsLeft--;
 
         // If no attempts are left, add the remaining dice to the diceKeep array,
         // as it will be used for the score calculation
         if (this.state.attemptsLeft === 0) {
             this.diceKeep.push(...diceRolled)
         }
-
         return diceRolled;
     }
 
@@ -95,7 +103,7 @@ class Yahtzee {
         this.selectionDone("upperSection", this.remainingSection.upperSection[multiplier - 1])
         this.resetAttempts()
         const score = this.diceKeep.filter(number => number === multiplier).length * multiplier;
-        this.state.pointsSum += score;
+        this.addPoints(score, true)
         return score
     }
 
@@ -107,7 +115,7 @@ class Yahtzee {
         this.selectionDone("lowerSection", "chance")
         this.resetAttempts()
         const score = this.sum();
-        this.state.pointsSum += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -116,10 +124,10 @@ class Yahtzee {
      * @returns {Number} The points gained for this category
      */
     yahtzee() {
+        const score = this.hasHitCountPoints(5)
         this.selectionDone("lowerSection", "yahtzee")
         this.resetAttempts()
-        const score = 50
-        this.state.pointsSum += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -128,10 +136,34 @@ class Yahtzee {
      * @returns {Number} The points gained for this category
      */
     fullHouse() {
+        const counts = {}
+        this.diceKeep.forEach(function (x) {
+            counts[x] = (counts[x] || 0) + 1;
+        });
+
+        const results = {
+            2: 0,
+            3: 0
+        }
+
+        Object.keys(results).forEach((key) => {
+            Object.keys(counts).forEach((number) => {
+                if (counts[number] === key) {
+                    results[key] = number
+                }
+            })
+        })
+
         this.selectionDone("lowerSection", "fullHouse")
         this.resetAttempts()
-        const score = 25
-        this.state.pointsSum += score;
+
+        let score
+        if (results[2] === 0 || results[3] === 0) {
+            score = 0
+        } else {
+            score = 25
+        }
+        this.addPoints(score, false)
         return score
     }
 
@@ -140,10 +172,10 @@ class Yahtzee {
      * @returns {Number} The points gained for this category
      */
     fourOfAKind() {
+        const score = this.hasHitCountPoints(4)
         this.selectionDone("lowerSection", "fourOfAKind")
         this.resetAttempts()
-        const score = this.sum()
-        this.state.pointsSum += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -152,10 +184,10 @@ class Yahtzee {
      * @returns {Number} The points gained for this category
      */
     threeOfAKind() {
+        const score = this.hasHitCountPoints(3)
         this.selectionDone("lowerSection", "threeOfAKind")
         this.resetAttempts()
-        const score = this.sum()
-        this.state.pointsSum += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -166,8 +198,9 @@ class Yahtzee {
     smallStraight() {
         this.selectionDone("lowerSection", "smallStraight")
         this.resetAttempts()
-        const score = 30
-        this.state.pointsSum += score;
+        let score;
+        this.isValidStraight(4) ? score = 30 : score = 0
+        this.addPoints(score, false)
         return score
     }
 
@@ -178,8 +211,9 @@ class Yahtzee {
     largeStraight() {
         this.selectionDone("lowerSection", "largeStraight")
         this.resetAttempts()
-        const score = 40
-        this.state.pointsSum += score;
+        let score;
+        this.isValidStraight(5) ? score = 40 : score = 0
+        this.addPoints(score, false)
         return score
     }
 
@@ -200,13 +234,90 @@ class Yahtzee {
      */
     bonusPoints() {
         const bonusTextElement = document.getElementById('score-bonus')
-        if (this.state.pointsSum > 63) {
+        const upperScoreSumElement = document.getElementById("upper-sum")
+        if (this.state.points.upperSection > 63) {
             bonusTextElement.innerText = "35"
-            this.state.pointsSum += 35
+            this.addPoints(35, false)
         } else {
             bonusTextElement.innerText = "None :("
         }
+        upperScoreSumElement.innerText = this.state.points.upperSection
         yahtzee.state.bonusCalculated = true
+    }
+
+    /**
+     * Check if the dice array contains a certain number of the same dice.
+     * @param count The number of dice to check for
+     * @return {number} The score if the dice array contains the given number of dice, 0 otherwise
+     */
+    hasHitCountPoints(count) {
+        const counts = {}
+        this.diceKeep.forEach(function (x) {
+            counts[x] = (counts[x] || 0) + 1;
+        });
+
+        let result
+        Object.keys(counts).forEach((number) => {
+            if (counts[number] >= count) {
+                result = number
+            }
+        })
+
+        let score
+        if (result) {
+            // Special case: this is a Yahtzee
+            if (count === 5) {
+                score = 50
+            } else {
+                score = this.sum()
+            }
+            console.log("Score hit")
+        } else {
+            score = 0
+            console.log("Score not hit")
+        }
+
+        return score
+    }
+
+    /**
+     * Check if the dice array contains a straight of a certain kind.
+     * @param kind The kind of straight to check for (4,5)
+     * @return {boolean} A boolean indicating whether the dice array contains a straight of the given kind
+     */
+    isValidStraight(kind) {
+        let straight = 0;
+        let dice = this.diceKeep.sort();
+        for (let i = 0; i < dice.length - 1; i++) {
+            if (dice[i] + 1 === dice[i + 1]) {
+                straight++;
+            }
+        }
+        return straight >= kind;
+    }
+
+    /**
+     * Add points to the total score and the upper section score, if applicable.
+     * @param score The score to add
+     * @param isUpper A boolean indicating whether the score should be added to the upper section
+     */
+    addPoints(score, isUpper) {
+        this.state.points.total += score;
+        if (isUpper) {
+            this.state.points.upperSection += score;
+        }
+    }
+
+    /**
+     * Move the dice from the tempKeep array to the diceKeep array. Usually called when the user rolls the dice.
+     */
+    moveTempKeepToKeep() {
+        for (const key in this.state.tempKeep) {
+            if (this.state.tempKeep[key] !== undefined) {
+                this.diceKeep.push(parseInt(this.state.tempKeep[key]))
+            }
+        }
+        this.state.tempKeep = {}
     }
 }
 
@@ -248,7 +359,7 @@ const finishRun = () => {
     const scoreDisplay = document.getElementById('score-info')
     const scoreButtons = document.querySelectorAll('td > button')
 
-    scoreDisplay.innerText = yahtzee.state.pointsSum
+    scoreDisplay.innerText = yahtzee.state.points.total
     rollDice.disabled = false
     keepButtons.forEach(button => {
         const number = button.id.replace(/\D/g, '');
@@ -262,15 +373,17 @@ const finishRun = () => {
     })
 
     updateRemainingRollCount(yahtzee.state.attemptsLeft);
+    yahtzee.diceKeep = []
 
     // React to special stages of the game, e.g., a fully filled upper section
     if (yahtzee.remainingSection.upperSection.length === 0 && !yahtzee.state.bonusCalculated) {
         yahtzee.bonusPoints()
     } else if (yahtzee.remainingSection.upperSection.length === 0 && yahtzee.remainingSection.lowerSection.length === 0) {
         // In case all sections are filled, we want to end the game
-        alert(`Game over! Your final score is ${yahtzee.state.pointsSum}.`)
+        alert(`Game over! Your final score is ${yahtzee.state.points.total}.`)
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', function () {
     // Add event listener to each "Keep" button
@@ -291,10 +404,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Select the dice via our Yahtzee class
-            yahtzee.selectDice(Number(dice.innerText))
-
-            // Don't allow further modification to this button until the next run
-            button.disabled = true
+            yahtzee.selectDice(dice)
 
             if (yahtzee.state.diceCount === 0) {
                 finishRollingDicePhase()
@@ -312,17 +422,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const rollDice = document.getElementById('roll-button');
     rollDice.addEventListener('click', function () {
+        // Move the dice from the tempKeep array to the diceKeep array, as the user has rolled the dice
+        yahtzee.moveTempKeepToKeep()
+
         // Roll the dice and update each field that hasn't been selected already
         const results = yahtzee.rollDice();
+        updateDiceDisplay(results);
+
+        // Create a (non-referencing) copy of the result array to avoid modifying the original array
+        const resultsCopy = [...results];
         for (const field in diceFields) {
             const currentField = diceFields[`${field}`];
             if (currentField.style.backgroundColor !== 'brown') {
-                diceFields[field].innerText = results.pop().toString();
+                diceFields[field].innerText = resultsCopy.pop().toString();
             }
         }
-        updateDiceDisplay(yahtzee.dice);
-        console.log(yahtzee.dice);
-        debugger;
+
         updateRemainingRollCount(yahtzee.state.attemptsLeft);
 
         // Disable roll and keep buttons when no attempts are left
@@ -383,7 +498,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 case "SmallStraight":
                     score = yahtzee.smallStraight();
                     break;
-                case "LageStraight":
+                case "LargeStraight":
                     score = yahtzee.largeStraight();
                     break;
                 case "Yahtzee":
@@ -397,21 +512,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-function updateDiceDisplay(){
-    const diceElement = document.getElementById('dice1');
-    diceElement.className = 'innercontainer'; 
 
-    if (yahtzee.dice[0] === 1)
+function updateDiceDisplay(diceArray) {
+    const diceElement = document.getElementById('dice1');
+    console.log(diceElement, )
+    diceElement.className = 'innercontainer';
+
+    if (diceArray[0] === 1)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 2)
+    else if (diceArray[0] === 2)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 3)
+    else if (diceArray[0] === 3)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 4)
+    else if (diceArray[0] === 4)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 5)
+    else if (diceArray[0] === 5)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 6)
+    else if (diceArray[0] === 6)
         diceElement.classList.add('dice-1');
 }
 
