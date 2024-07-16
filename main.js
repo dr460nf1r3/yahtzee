@@ -519,16 +519,16 @@ function updateDiceDisplay(diceArray) {
     diceElement.className = 'innercontainer';
 
     if (diceArray[0] === 1)
-        diceElement.classList.add('dice-1');
+        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
     else if (diceArray[0] === 2)
-        diceElement.classList.add('dice-2');
+        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
     else if (diceArray[0] === 3)
-        diceElement.classList.add('dice-3');
+        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
     else if (diceArray[0] === 4)
-        diceElement.classList.add('dice-4');
+        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
     else if (diceArray[0] === 5)
-        diceElement.classList.add('dice-5');
+        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
     else if (diceArray[0] === 6)
-        diceElement.classList.add('dice-6');
+        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
 }
 
