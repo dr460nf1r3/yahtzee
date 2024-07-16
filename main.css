@@ -7,7 +7,6 @@
     font-size: 60px;
     font-weight: bold;
     text-align: center;
-    margin-top: 5%;
     color: white
 
 }
@@ -32,7 +31,8 @@
     justify-content: center;
     align-items: center;
     background-color: beige;
-    color: rgba(255, 255, 255, 0.5)
+    color: rgba(255, 255, 255, 0.5);
+    border-radius: 20%;
 }
 
 .innercontainer_lock {
@@ -120,11 +120,12 @@ body {
 .dice-1, .dice-2, .dice-3, .dice-4, .dice-5, .dice-6 {
     background-position: center;
     background-repeat: no-repeat;
-    background-size: 100% 100%;
+    background-size: contain;
 }
 
 .dice-1 {
     background-image: url('./assets/dice-one-svgrepo-com.svg');
+
 }
 
 .dice-2 {
@@ -148,7 +149,8 @@ body {
 }
 
 .keeping {
-    background-color: brown;
+    background-color: rgba(2, 196, 190, 0.737);
+    filter: invert(100%);
 }
 
 .upper {

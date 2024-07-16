@@ -448,7 +448,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Find the corresponding dice
             const dice = document.getElementById(`dice${number}`);
-
+            
             // Toggle the dices background color between green and beige
             if (dice.classList.contains("keeping")) {
                 dice.classList.remove("keeping")
