@@ -24,6 +24,7 @@ class Yahtzee {
             total: 0
         },
         bonusCalculated: false,
+        tempKeep: {}
     };
     diceKeep = []
 
@@ -51,11 +52,17 @@ class Yahtzee {
 
     /**
      * Selects the dice to keep and updates the remaining dice count.
-     * @param dice Number of the dice to select
+     * @param dice The dice HTMLElement to keep
      */
     selectDice(dice) {
-        this.diceKeep.push(dice);
-        this.state.diceCount = this.state.diceCount - 1;
+        // Add the dice to the tempKeep array and decrement the dice count if it's not already in the array
+        if (!this.state.tempKeep.hasOwnProperty(dice.id)) {
+            this.state.tempKeep[dice.id] = dice.innerText
+            this.state.diceCount--;
+        } else {
+            this.state.tempKeep[dice.id] = undefined
+            this.state.diceCount++
+        }
     }
 
     /**
@@ -69,15 +76,13 @@ class Yahtzee {
             diceRolled.push(Math.floor(Math.random() * 6) + 1);
         }
         this.dice = diceRolled;
-
-        this.state.attemptsLeft -= 1;
+        this.state.attemptsLeft--;
 
         // If no attempts are left, add the remaining dice to the diceKeep array,
         // as it will be used for the score calculation
         if (this.state.attemptsLeft === 0) {
             this.diceKeep.push(...diceRolled)
         }
-
         return diceRolled;
     }
 
@@ -98,7 +103,7 @@ class Yahtzee {
         this.selectionDone("upperSection", this.remainingSection.upperSection[multiplier - 1])
         this.resetAttempts()
         const score = this.diceKeep.filter(number => number === multiplier).length * multiplier;
-        this.state.points.total += score;
+        this.addPoints(score, true)
         return score
     }
 
@@ -110,7 +115,7 @@ class Yahtzee {
         this.selectionDone("lowerSection", "chance")
         this.resetAttempts()
         const score = this.sum();
-        this.state.points += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -122,7 +127,7 @@ class Yahtzee {
         const score = this.hasHitCountPoints(5)
         this.selectionDone("lowerSection", "yahtzee")
         this.resetAttempts()
-        this.state.points.total += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -158,7 +163,7 @@ class Yahtzee {
         } else {
             score = 25
         }
-        this.state.points.total += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -170,7 +175,7 @@ class Yahtzee {
         const score = this.hasHitCountPoints(4)
         this.selectionDone("lowerSection", "fourOfAKind")
         this.resetAttempts()
-        this.state.points.total += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -182,7 +187,7 @@ class Yahtzee {
         const score = this.hasHitCountPoints(3)
         this.selectionDone("lowerSection", "threeOfAKind")
         this.resetAttempts()
-        this.state.points.total += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -195,7 +200,7 @@ class Yahtzee {
         this.resetAttempts()
         let score;
         this.isValidStraight(4) ? score = 30 : score = 0
-        this.state.points.total += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -208,7 +213,7 @@ class Yahtzee {
         this.resetAttempts()
         let score;
         this.isValidStraight(5) ? score = 40 : score = 0
-        this.state.points.total += score;
+        this.addPoints(score, false)
         return score
     }
 
@@ -230,13 +235,13 @@ class Yahtzee {
     bonusPoints() {
         const bonusTextElement = document.getElementById('score-bonus')
         const upperScoreSumElement = document.getElementById("upper-sum")
-        if (this.state.points.total > 63) {
+        if (this.state.points.upperSection > 63) {
             bonusTextElement.innerText = "35"
-            this.state.points.total += 35
+            this.addPoints(35, false)
         } else {
             bonusTextElement.innerText = "None :("
         }
-        upperScoreSumElement.innerText = this.state.points.total
+        upperScoreSumElement.innerText = this.state.points.upperSection
         yahtzee.state.bonusCalculated = true
     }
 
@@ -289,6 +294,30 @@ class Yahtzee {
             }
         }
         return straight >= kind;
+    }
+
+    /**
+     * Add points to the total score and the upper section score, if applicable.
+     * @param score The score to add
+     * @param isUpper A boolean indicating whether the score should be added to the upper section
+     */
+    addPoints(score, isUpper) {
+        this.state.points.total += score;
+        if (isUpper) {
+            this.state.points.upperSection += score;
+        }
+    }
+
+    /**
+     * Move the dice from the tempKeep array to the diceKeep array. Usually called when the user rolls the dice.
+     */
+    moveTempKeepToKeep() {
+        for (const key in this.state.tempKeep) {
+            if (this.state.tempKeep[key] !== undefined) {
+                this.diceKeep.push(parseInt(this.state.tempKeep[key]))
+            }
+        }
+        this.state.tempKeep = {}
     }
 }
 
@@ -355,6 +384,7 @@ const finishRun = () => {
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', function () {
     // Add event listener to each "Keep" button
     const keepButtons = document.querySelectorAll('.innercontainer_lock');
@@ -374,10 +404,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Select the dice via our Yahtzee class
-            yahtzee.selectDice(Number(dice.innerText))
-
-            // Don't allow further modification to this button until the next run
-            button.disabled = true
+            yahtzee.selectDice(dice)
 
             if (yahtzee.state.diceCount === 0) {
                 finishRollingDicePhase()
@@ -395,17 +422,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const rollDice = document.getElementById('roll-button');
     rollDice.addEventListener('click', function () {
+        // Move the dice from the tempKeep array to the diceKeep array, as the user has rolled the dice
+        yahtzee.moveTempKeepToKeep()
+
         // Roll the dice and update each field that hasn't been selected already
         const results = yahtzee.rollDice();
+        updateDiceDisplay(results);
+
+        // Create a (non-referencing) copy of the result array to avoid modifying the original array
+        const resultsCopy = [...results];
         for (const field in diceFields) {
             const currentField = diceFields[`${field}`];
             if (currentField.style.backgroundColor !== 'brown') {
-                diceFields[field].innerText = results.pop().toString();
+                diceFields[field].innerText = resultsCopy.pop().toString();
             }
         }
-        updateDiceDisplay(yahtzee.dice);
-        console.log(yahtzee.dice);
-        debugger;
+
         updateRemainingRollCount(yahtzee.state.attemptsLeft);
 
         // Disable roll and keep buttons when no attempts are left
@@ -480,21 +512,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-function updateDiceDisplay(){
-    const diceElement = document.getElementById('dice1');
-    diceElement.className = 'innercontainer'; 
 
-    if (yahtzee.dice[0] === 1)
+function updateDiceDisplay(diceArray) {
+    const diceElement = document.getElementById('dice1');
+    console.log(diceElement, )
+    diceElement.className = 'innercontainer';
+
+    if (diceArray[0] === 1)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 2)
+    else if (diceArray[0] === 2)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 3)
+    else if (diceArray[0] === 3)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 4)
+    else if (diceArray[0] === 4)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 5)
+    else if (diceArray[0] === 5)
         diceElement.classList.add('dice-1');
-    else if (yahtzee.dice[0] === 6)
+    else if (diceArray[0] === 6)
         diceElement.classList.add('dice-1');
 }
 
