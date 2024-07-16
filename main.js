@@ -480,19 +480,18 @@ document.addEventListener('DOMContentLoaded', function () {
         // Move the dice from the tempKeep array to the diceKeep array, as the user has rolled the dice
         player.moveTempKeepToKeep()
 
-        // Roll the dice and update each field that hasn't been selected already
-        const results = player.rollDice();
-        updateDiceDisplay(results);
-
         // Create a (non-referencing) copy of the result array to avoid modifying the original array
-        const resultsCopy = [...results];
+        const results = player.rollDice();
+
+        // Update each field that hasn't been selected already
         for (const field in diceFields) {
             const currentField = diceFields[`${field}`];
             if (currentField.style.backgroundColor !== 'brown') {
-                diceFields[field].innerText = resultsCopy.pop().toString();
+                diceFields[field].innerText = results.pop().toString();
             }
         }
 
+        updateDiceDisplay(diceFields);
         updateRemainingRollCount(player.state.attemptsLeft);
 
         // Disable roll and keep buttons when no attempts are left
@@ -569,23 +568,30 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-function updateDiceDisplay(diceArray) {
-    const diceElement = document.getElementById('dice1');
-    console.log(diceElement, diceArray)
-    diceElement.className = 'innercontainer';
-
-    if (diceArray[0] === 1)
-        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
-    else if (diceArray[0] === 2)
-        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
-    else if (diceArray[0] === 3)
-        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
-    else if (diceArray[0] === 4)
-        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
-    else if (diceArray[0] === 5)
-        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
-    else if (diceArray[0] === 6)
-        diceElement.style.backgroundImage('url(/assets/dice-one-svgrepo-com.svg)');
+function updateDiceDisplay(diceElements) {
+    for (let element in diceElements) {
+        // Ensure no dice classes are set
+        switch (diceElements[element].innerText) {
+            case "1":
+                diceElements[element].classList.add('dice-1');
+                break;
+            case "2":
+                diceElements[element].classList.add('dice-2');
+                break;
+            case "3":
+                diceElements[element].classList.add('dice-3');
+                break;
+            case "4":
+                diceElements[element].classList.add('dice-4');
+                break;
+            case "5":
+                diceElements[element].classList.add('dice-5');
+                break;
+            case "6":
+                diceElements[element].classList.add('dice-6');
+                break;
+        }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
