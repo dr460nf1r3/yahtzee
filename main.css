@@ -19,6 +19,9 @@
     text-align: center;
     margin-top: 5%;
     margin-bottom: 5%;
+    color: white;
+    background-color: rgb(148, 39, 39);
+    filter: brightness(110%);
 }
 
 .roll {
@@ -93,10 +96,13 @@ th {
     linear-gradient(-45deg, hsla(0, 100%, 20%, 0) 49%, hsla(0, 100%, 0%, 1) 50%, hsla(0, 100%, 20%, 0) 70%) 0 0;
     background-color: #300;
     background-size: 100px 100px;
+    border-radius: 10%;
 }
 
 .roles_left {
     margin-bottom: 3%;
+    color:white;
+    font-style: italic;
 }
 
 .score {
@@ -105,6 +111,7 @@ th {
     text-align: center;
     margin-top: 5%;
     margin-bottom: 5%;
+    color: white;
 }
 
 body {
@@ -119,27 +126,27 @@ body {
 }
 
 .dice-1{
-    background-image: ;
+    background-image: url("assets/dice-one-svgrepo-com.svg")
 }
 
 .dice-2{
-    background-color: purple;
+    background-image: url("assets/dice-two-svgrepo-com.svg")
 }
 
 .dice-3{
-    background-color: purple;
+    background-image: url("assets/dice-three-svgrepo-com.svg")
 }
 
 .dice-4{
-    background-color: purple;
+    background-image: url("assets/dice-four-svgrepo-com.svg")
 }
 
 .dice-5{
-    background-color: purple;
+    background-image: url("assets/dice-five-svgrepo-com.svg")
 }
 
 .dice-6{
-    background-color: purple;
+    background-image: url("assets/dice-six-svgrepo-com.svg")
 }
 
 .upper{

@@ -521,14 +521,14 @@ function updateDiceDisplay(diceArray) {
     if (diceArray[0] === 1)
         diceElement.classList.add('dice-1');
     else if (diceArray[0] === 2)
-        diceElement.classList.add('dice-1');
+        diceElement.classList.add('dice-2');
     else if (diceArray[0] === 3)
-        diceElement.classList.add('dice-1');
+        diceElement.classList.add('dice-3');
     else if (diceArray[0] === 4)
-        diceElement.classList.add('dice-1');
+        diceElement.classList.add('dice-4');
     else if (diceArray[0] === 5)
-        diceElement.classList.add('dice-1');
+        diceElement.classList.add('dice-5');
     else if (diceArray[0] === 6)
-        diceElement.classList.add('dice-1');
+        diceElement.classList.add('dice-6');
 }
 
