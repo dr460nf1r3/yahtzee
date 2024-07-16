@@ -413,7 +413,7 @@ const finishRun = () => {
         const number = button.id.replace(/\D/g, '');
         button.disabled = true
         const dice = document.getElementById(`dice${number}`);
-        dice.style.backgroundColor = 'beige';
+        dice.classList.remove("keeping")
         dice.innerText = ""
     })
     scoreButtons.forEach(button => {
@@ -450,10 +450,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const dice = document.getElementById(`dice${number}`);
 
             // Toggle the dices background color between green and beige
-            if (dice.style.backgroundColor === 'brown') {
-                dice.style.backgroundColor = 'beige';
+            if (dice.classList.contains("keeping")) {
+                dice.classList.remove("keeping")
             } else {
-                dice.style.backgroundColor = 'brown';
+                dice.classList.add("keeping")
             }
 
             // Select the dice via our Yahtzee class
@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update each field that hasn't been selected already
         for (const field in diceFields) {
             const currentField = diceFields[`${field}`];
-            if (currentField.style.backgroundColor !== 'brown') {
+            if (!currentField.classList.contains('keeping')) {
                 diceFields[field].innerText = results.pop().toString();
             }
         }
@@ -566,10 +566,19 @@ document.addEventListener('DOMContentLoaded', function () {
             finishRun()
         });
     });
+
+    document.getElementById('resetGameButton').addEventListener('click', function () {
+        location.reload();
+    });
 });
 
 function updateDiceDisplay(diceElements) {
     for (let element in diceElements) {
+        // If we are keeping an element, we don't want to change the dice class
+        if (diceElements[element].classList.contains("keeping")) {
+            continue;
+        }
+
         // Ensure no dice classes are set
         diceElements[element].classList = ["innercontainer"];
 
@@ -594,12 +603,7 @@ function updateDiceDisplay(diceElements) {
                 break;
         }
 
-
+        // We don't need this anymore, as the dice are now displayed in the inner container
+        diceElements[element].innerText = "";
     }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('resetGameButton').addEventListener('click', function() {
-        location.reload();
-    });
-});

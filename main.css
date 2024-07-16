@@ -147,6 +147,10 @@ body {
     background-image: url('./assets/dice-six-svgrepo-com.svg');
 }
 
+.keeping {
+    background-color: brown;
+}
+
 .upper {
     color: #017845;
 }
