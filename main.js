@@ -6,6 +6,7 @@
  * @property {Number} state.diceCount - Number of dice to roll
  * @property {Number} state.attemptsLeft - Number of attempts left
  * @property {Number} state.points.total - Sum of the points
+ * @property {Object} state.tempKeep - Temporary dice keeping object, used after rolling and before finishing.
  * @property {Boolean} state.bonusCalculated - Whether the bonus has been calculated
  * @property {Number[]} diceKeep - Array to store the dice that are kept, used for calculating the score
  * @property {Object} remainingSection - Object to store the remaining sections of the game
@@ -162,10 +163,8 @@ class Yahtzee {
         let score
         if (results[2] === 0 || results[3] === 0) {
             score = 0
-            console.log("No full house")
         } else {
             score = 25
-            console.log("Full house")
         }
         this.addPoints(score, false)
         return score
@@ -227,7 +226,6 @@ class Yahtzee {
      * @param method The method that was just completed (ones, twos, etc.)
      */
     selectionDone(section, method) {
-        console.log("Selection done", section, method)
         const sectionIndex = this.remainingSection[`${section}`].indexOf(`${method}`)
         this.remainingSection[`${section}`].splice(sectionIndex, 1)
     }
@@ -380,6 +378,10 @@ const updateRemainingRollCount = (attemptsLeft) => {
     document.getElementById('roll-count-lang').innerText = attemptsLeft !== 1 ? "times" : "time"
 }
 
+/**
+ * Finish the rolling dice phase by disabling the roll and keep buttons.
+ * Also enables the score buttons that are not filled by the current player yet.
+ */
 const finishRollingDicePhase = () => {
     const keepButtons = document.querySelectorAll('.innercontainer_lock');
     const rollDice = document.getElementById('roll-button')
@@ -458,10 +460,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Select the dice via our Yahtzee class
             player.selectDice(dice)
-
-            if (player.state.diceCount === 0) {
-                finishRollingDicePhase()
-            }
         });
     });
 
@@ -479,6 +477,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Move the dice from the tempKeep array to the diceKeep array, as the user has rolled the dice
         player.moveTempKeepToKeep()
+
+        // shuffleDiceDisplay(diceFields)
 
         // Create a (non-referencing) copy of the result array to avoid modifying the original array
         const results = player.rollDice();
