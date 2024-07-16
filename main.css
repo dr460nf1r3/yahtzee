@@ -92,7 +92,9 @@ th {
 }
 
 .roles_left {
-    margin-bottom: 3%;
+    font-size: 20px;
+    margin-bottom: 7%;
+    margin-top: 7%;
     color: white;
     font-style: italic;
 }
@@ -103,7 +105,16 @@ th {
     text-align: center;
     margin-top: 5%;
     margin-bottom: 5%;
-    color: white;
+    color: orange;
+}
+
+.player {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 25%;
+    margin-bottom: 5%;
+    color: gold;
 }
 
 body {
