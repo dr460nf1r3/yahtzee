@@ -1,0 +1,55 @@
+@font-face {
+    font-family: "Fira Sans";
+    src: local("Fira Sans Light"),
+    url("docs/fonts/FiraSans-Light.woff") format("woff");
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Fira Sans";
+    src: local("Fira Sans Light Italic"),
+    url("docs/fonts/FiraSans-LightItalic.woff") format("woff");
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Fira Sans";
+    src: local("Fira Sans Regular"),
+    url("docs/fonts/FiraSans-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Fira Sans";
+    src: local("Fira Sans Medium"),
+    url("docs/fonts/FiraSans-Medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Fira Sans";
+    src: local("Fira Sans Medium Italic"),
+    url("docs/fonts/FiraSans-MediumItalic.woff") format("woff");
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Fira Sans";
+    src: local("Fira Sans Bold"),
+    url("docs/fonts/FiraSans-Bold.woff") format("woff");
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Fira Sans";
+    src: local("Fira Sans Bold Italic"),
+    url("docs/fonts/FiraSans-BoldItalic.woff") format("woff");
+    font-weight: 600;
+    font-style: italic;
+}
