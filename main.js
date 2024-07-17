@@ -290,7 +290,7 @@ class Yahtzee {
         let straight = 0;
         this.diceKeep = [1, 5, 2, 3, 4];
         let dice = this.diceKeep.sort();
-        straight = 0;
+        straight = 1;
         for (let i = 0; i < dice.length; i++) {
             if (dice[i] + 1 === dice[i + 1]) {
                 straight++;
