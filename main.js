@@ -3,8 +3,11 @@
  * @class
  * @property {Number[]} dice - Array to store the dice that are rolled
  * @property {Object} state - Object to store the current state of the game
+ * @property {String} state.name - The name of the player
  * @property {Number} state.diceCount - Number of dice to roll
  * @property {Number} state.attemptsLeft - Number of attempts left
+ * @property {Object} state.points - Object to store the points of the player
+ * @property {Number} state.points.upperSection - Sum of the upper section points
  * @property {Number} state.points.total - Sum of the points
  * @property {Boolean} state.bonusCalculated - Whether the bonus has been calculated
  * @property {Number[]} diceKeep - Array to store the dice that are kept, used for calculating the score
@@ -288,7 +291,6 @@ class Yahtzee {
      */
     isValidStraight(kind) {
         let straight = 0;
-        this.diceKeep = [1, 5, 2, 3, 4];
         let dice = this.diceKeep.sort();
         straight = 1;
         for (let i = 0; i < dice.length; i++) {
@@ -328,8 +330,8 @@ class YahtzeeGame {
 
     /**
      * Create a Yahtzee game with a number of players.
-     * It allows creating a game with multiple players, but the current implementation hardcodes it to two players.
-     * @param names The names of the players as an array of strings
+     * It allows creating a game with multiple players, but the current implementation hardcodes it one player.
+     * @param names The names of the players as string, as many as you want to create
      */
     constructor(...names) {
         for (const name of names) {

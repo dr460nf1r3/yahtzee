@@ -1,3 +1,5 @@
+@import "fonts.css";
+
 .outtercontainer {
     display: flex;
     justify-content: space-around;
@@ -8,7 +10,6 @@
     font-weight: bold;
     text-align: center;
     color: white
-
 }
 
 .roll {
@@ -36,7 +37,6 @@
 }
 
 .innercontainer_lock {
-
     width: 100px;
     height: 20px;
     border: 1px solid black;
@@ -46,32 +46,15 @@
     align-items: center;
 }
 
-/*table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: whitesmoke;
-    color: rgb(12, 129, 179);
-}
-
-th, td {
-    border: 1px solid rgb(12, 129, 179);
-    text-align: left;
-    padding: 8px;
-}
-
-th {
-    background-color: #141313;
-}*/
-
 .main-container {
     display: flex;
     justify-content: space-between;
+    padding: 10px;
 }
 
 .outtercontainer_left, .outtercontainer_right {
     flex: 1;
-    /* Optional: Add some padding or margin for spacing */
-    padding: 10px;
+    padding: 30px;
 }
 
 .outtercontainer_left {
@@ -87,7 +70,7 @@ th {
     linear-gradient(-45deg, hsla(0, 100%, 20%, 0) 49%, hsla(0, 100%, 0%, 1) 50%, hsla(0, 100%, 20%, 0) 70%) 0 0;
     background-color: #300;
     background-size: 100px 100px;
-    border-radius: 10%;
+    border-radius: 5%;
     box-shadow: rgb(178, 10, 10) 0px 30px 60px -12px inset, rgba(188, 5, 5, 0.3) 0px 18px 36px -18px inset;
 }
 
@@ -136,7 +119,6 @@ body {
 
 .dice-1 {
     background-image: url('./assets/dice-one-svgrepo-com.svg');
-
 }
 
 .dice-2 {
@@ -188,10 +170,11 @@ body {
 }
 
 table {
+    width: 100%;
+    height: 100%;
     background: rgba(255, 255, 255, 0.922);
-    border-radius: 0.25em;
+    border-radius: 0.5em;
     border-collapse: collapse;
-    margin: 1em;
 }
 
 th {
