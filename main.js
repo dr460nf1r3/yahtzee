@@ -326,6 +326,14 @@ class Yahtzee {
     }
 }
 
+/**
+ * Class representing a Yahtzee game with multiple players.
+ * @class
+ * @property {Object} players - Object to store the players in the game
+ * @property {Object} state - Object to store the current state of the game
+ * @property {Number} state.playerTurn - The current player's turn
+ * @example const yahtzeeGame = new YahtzeeGame("Player 1", "Player 2")
+ */
 class YahtzeeGame {
     players = {}
     state = {
@@ -477,6 +485,9 @@ class YahtzeeGame {
         scoreDisplay.innerText = this.currentPlayer().state.points.total
     }
 
+    /**
+     * Initialize the game by setting up event listeners and updating the current player.
+     */
     init() {
         this.setupEventListeners()
         this.updateCurrentPlayer()
@@ -486,6 +497,9 @@ class YahtzeeGame {
         }
     }
 
+    /**
+     * Set up event listeners for the game.
+     */
     setupEventListeners() {
         // Add event listener to each "Keep" button
         const keepButtons = document.querySelectorAll('.innercontainer_lock');
@@ -621,9 +635,11 @@ class YahtzeeGame {
     }
 }
 
+// Instantiate the Yahtzee class with hardcoded player names
 const yahtzeeGame = new YahtzeeGame("Player 1")
 
+// Add event listener to the DOMContentLoaded event to ensure the DOM is fully loaded before we start the game
+// This is necessary to ensure all elements are available when we try to access them
 document.addEventListener('DOMContentLoaded', () => {
-    // Instantiate the Yahtzee class with hardcoded player names
     yahtzeeGame.init()
 });
